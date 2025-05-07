@@ -102,5 +102,9 @@ endif()
 
 # Protobuf
 add_subdirectory(src/protobuf)
+
+# INCLUIR PASTA LIBS/WEBVIEW PARA HEADERS
+include_directories(${CMAKE_SOURCE_DIR}/libs)
+
 # Src
 add_subdirectory(src)

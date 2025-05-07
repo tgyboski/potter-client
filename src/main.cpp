@@ -27,6 +27,10 @@
 #include <framework/core/application.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/luaengine/luainterface.h>
+#include <framework/core/eventdispatcher.h>
+#include <framework/core/modulemanager.h>
+#include <framework/ui/uimanager.h>
+#include "client/webview_lua.h"
 
 #ifndef ANDROID
 #if ENABLE_DISCORD_RPC == 1
@@ -104,6 +108,13 @@ extern "C" {
 #ifdef FRAMEWORK_NET
         g_http.init();
 #endif
+
+        // Inicializa a interface Lua da webview
+        try {
+          initWebViewLua();
+        } catch (const std::exception& e) {
+            g_logger.error(stdext::format("Lua binding error: %s", e.what()));
+        }
 
         if (!g_lua.safeRunScript("init.lua"))
             g_logger.fatal("Unable to run script init.lua!");

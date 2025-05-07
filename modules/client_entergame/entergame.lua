@@ -127,6 +127,7 @@ end
 -- public functions
 function EnterGame.init()
     enterGame = g_ui.displayUI('entergame')
+    enterGame.setText("Enter Game")
     Keybind.new("Misc.", "Change Character", "Ctrl+G", "")
     Keybind.bind("Misc.", "Change Character", {
       {
@@ -134,6 +135,15 @@ function EnterGame.init()
         callback = EnterGame.openWindow,
       }
     })
+
+    -- Carrega o módulo da webview com verificação de segurança
+    if g_modules.getModule("client_webview") then
+        g_logger.info("Tentando carregar o módulo client_webview...")
+        g_modules.ensureModuleLoaded("client_webview")
+        g_logger.info("Módulo client_webview carregado com sucesso.")
+    else
+        g_logger.warning("Módulo client_webview não encontrado.")
+    end
 
     local account = g_settings.get('account')
     local password = g_settings.get('password')
@@ -447,10 +457,24 @@ function EnterGame.show()
     enterGame:show()
     enterGame:raise()
     enterGame:focus()
+    
+    -- Mostra a webview quando a tela de login for exibida
+    local webviewModule = g_modules.getModule("client_webview")
+    if webviewModule and webviewModule:isLoaded() then
+        g_logger.info("Mostrando WebView na tela de login")
+        modules.client_webview.show()
+    end
 end
 
 function EnterGame.hide()
     enterGame:hide()
+    
+    -- Esconde a webview quando a tela de login for escondida
+    local webviewModule = g_modules.getModule("client_webview")
+    if webviewModule and webviewModule:isLoaded() then
+        g_logger.info("Escondendo WebView ao sair da tela de login")
+        modules.client_webview.hide()
+    end
 end
 
 function EnterGame.openWindow()

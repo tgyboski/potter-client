@@ -106,5 +106,14 @@ add_subdirectory(src/protobuf)
 # INCLUIR PASTA LIBS/WEBVIEW PARA HEADERS
 include_directories(${CMAKE_SOURCE_DIR}/libs)
 
+# Webview
+include(FetchContent)
+FetchContent_Declare(
+    webview
+    GIT_REPOSITORY https://github.com/webview/webview
+    GIT_TAG master
+)
+FetchContent_MakeAvailable(webview)
+
 # Src
 add_subdirectory(src)

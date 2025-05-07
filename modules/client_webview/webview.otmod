@@ -1,0 +1,9 @@
+Module
+  name: client_webview
+  description: WebView modal module for login screen
+  author: edubart
+  website: https://github.com/edubart/otclient
+  sandboxed: true
+  scripts: [ webview ]
+  @onLoad: init()
+  @onUnload: terminate() 

@@ -47,7 +47,7 @@
 
 #include <objbase.h>
 
-#include "WebView2.h" // amalgamate(skip)
+#include "libs/webview2/WebView2.h" // amalgamate(skip)
 
 #ifdef _MSC_VER
 #pragma comment(lib, "ole32.lib")

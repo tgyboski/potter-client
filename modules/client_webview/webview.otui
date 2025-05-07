@@ -1,0 +1,28 @@
+WebViewModal < ModalDialog
+  id: webViewModal
+  size: 800 600
+  &minimumWidth: 400
+  &maximumWidth: 1200
+  &minimumHeight: 300
+  &maximumHeight: 800
+  background-color: #000000
+  opacity: 0.95
+
+  Label
+    id: webViewTitle
+    anchors.top: parent.top
+    anchors.left: parent.left
+    anchors.right: parent.right
+    text-align: center
+    font: verdana-11px-monochrome
+    color: #ffffff
+    background-color: #000000
+    height: 20
+
+  Panel
+    id: webViewContainer
+    anchors.top: webViewTitle.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    background-color: #000000 

@@ -1,4 +1,3 @@
-
 project(otclient)
 
 # *****************************************************************************
@@ -48,6 +47,11 @@ elseif(ANDROID)
 else()
 	add_executable(${PROJECT_NAME} "")
 endif()
+
+# Adiciona os arquivos fonte
+target_sources(${PROJECT_NAME} PRIVATE
+    client/webview_lua.cpp
+)
 
 # *****************************************************************************
 # Options Code
@@ -352,7 +356,8 @@ set(SOURCE_FILES
 	client/uiminimap.cpp
 	client/uiprogressrect.cpp
 	client/uisprite.cpp
-  client/test_webview.cpp
+	client/test_webview.cpp
+	client/webview_lua.cpp
 
 	main.cpp
 	androidmain.cpp
@@ -474,6 +479,7 @@ if(MSVC)
 
 	target_include_directories(${PROJECT_NAME}
 		PRIVATE
+    ${CMAKE_SOURCE_DIR}/libs
 		$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/>
 		$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 		${LUAJIT_INCLUDE_DIR}

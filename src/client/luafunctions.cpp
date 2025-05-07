@@ -1093,12 +1093,28 @@ void Client::registerLuaFunctions()
     g_lua.registerClass<UIMapAnchorLayout, UIAnchorLayout>();
 
 #ifdef _WIN32
-    // Registra a classe WebViewWrapper
-    g_lua.registerClass<WebViewWrapper>();
-    g_lua.bindClassStaticFunction<WebViewWrapper>("create", [](bool debug) {
-        return std::make_shared<WebViewWrapper>(debug);
-    });
-    g_lua.bindClassMemberFunction<WebViewWrapper>("navigate", &WebViewWrapper::navigate);
-    g_lua.bindClassMemberFunction<WebViewWrapper>("run", &WebViewWrapper::run);
+    // Registra a classe WebViewWrapper apenas se estiver disponível no sistema
+    g_logger.info("Verificando se WebView pode ser carregado...");
+    if (WebViewWrapper::shouldLoad()) {
+        try {
+            g_logger.info("WebView2 disponível, registrando classe no Lua...");
+            
+            // Registra a classe WebViewWrapper
+            g_lua.registerClass<WebViewWrapper>();
+            g_lua.bindClassStaticFunction<WebViewWrapper>("create", [](bool debug) {
+                return std::make_shared<WebViewWrapper>(debug);
+            });
+            g_lua.bindClassMemberFunction<WebViewWrapper>("navigate", &WebViewWrapper::navigate);
+            g_lua.bindClassMemberFunction<WebViewWrapper>("run", &WebViewWrapper::run);
+            
+            g_logger.info("WebView registrado com sucesso.");
+        } catch (const std::exception& e) {
+            g_logger.error("Erro ao registrar WebView: " + std::string(e.what()));
+        } catch (...) {
+            g_logger.error("Erro desconhecido ao registrar WebView");
+        }
+    } else {
+        g_logger.warning("WebView2 não disponível neste sistema, ignorando registro da classe.");
+    }
 #endif
 }

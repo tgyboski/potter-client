@@ -48,6 +48,7 @@
 #include "uieffect.h"
 #include "uiitem.h"
 #include "uimissile.h"
+#include "webview_lua.h"
 
 #include "attachableobject.h"
 #include "uigraph.h"
@@ -1090,4 +1091,14 @@ void Client::registerLuaFunctions()
 #endif
 
     g_lua.registerClass<UIMapAnchorLayout, UIAnchorLayout>();
+
+#ifdef _WIN32
+    // Registra a classe WebViewWrapper
+    g_lua.registerClass<WebViewWrapper>();
+    g_lua.bindClassStaticFunction<WebViewWrapper>("create", [](bool debug) {
+        return std::make_shared<WebViewWrapper>(debug);
+    });
+    g_lua.bindClassMemberFunction<WebViewWrapper>("navigate", &WebViewWrapper::navigate);
+    g_lua.bindClassMemberFunction<WebViewWrapper>("run", &WebViewWrapper::run);
+#endif
 }

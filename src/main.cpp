@@ -110,7 +110,11 @@ extern "C" {
 #endif
 
         // Inicializa a interface Lua da webview
-        initWebViewLua();
+        try {
+          initWebViewLua();
+        } catch (const std::exception& e) {
+            g_logger.error(stdext::format("Lua binding error: %s", e.what()));
+        }
 
         if (!g_lua.safeRunScript("init.lua"))
             g_logger.fatal("Unable to run script init.lua!");

@@ -136,7 +136,7 @@ function EnterGame.init()
     })
 
     -- Carrega o módulo da webview
-    g_modules.ensureModuleLoaded("client_webview")
+    -- g_modules.ensureModuleLoaded("client_webview")
 
     local account = g_settings.get('account')
     local password = g_settings.get('password')
@@ -452,18 +452,18 @@ function EnterGame.show()
     enterGame:focus()
     
     -- Mostra a webview quando a tela de login for exibida
-    if g_modules.getModule("client_webview"):isLoaded() then
-        modules.client_webview.show()
-    end
+    -- if g_modules.getModule("client_webview"):isLoaded() then
+    --     modules.client_webview.show()
+    -- end
 end
 
 function EnterGame.hide()
     enterGame:hide()
     
     -- Esconde a webview quando a tela de login for escondida
-    if g_modules.getModule("client_webview"):isLoaded() then
-        modules.client_webview.hide()
-    end
+    -- if g_modules.getModule("client_webview"):isLoaded() then
+    --     modules.client_webview.hide()
+    -- end
 end
 
 function EnterGame.openWindow()

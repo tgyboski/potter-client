@@ -1,0 +1,7 @@
+Module
+  name: game_build
+  description: Crafting system
+  scripts: [ build ]
+  sandboxed: true
+  @onLoad: init()
+  @onUnload: terminate() 

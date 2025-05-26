@@ -168,6 +168,12 @@ function optionsController:onInit()
     createButton_large('Store shop', tr('Store shop'), '/images/options/store_large', toggleStore,
     false, 8)
 
+    createButton_large('Build', tr('Build'), '/images/options/build-button', function()
+        if modules.game_build then
+            modules.game_build.open()
+        end
+    end, false, 9)
+
     if not optionPanel then
         optionPanel = g_ui.loadUI('option_control_buttons', modules.client_options:getPanel())
         modules.client_options.addButton("Interface", "Control Buttons", optionPanel, function() initControlButtons() end)

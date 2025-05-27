@@ -1100,7 +1100,7 @@ void Client::registerLuaFunctions()
     g_lua.registerClass<UIMapAnchorLayout, UIAnchorLayout>();
 
     // Registrar WebView2Panel
-    g_lua.registerClass<WebView2Panel>();
+    g_lua.registerClass<WebView2Panel, UIWidget>();
     g_lua.bindClassStaticFunction<WebView2Panel>("create", [] { 
         HWND hwnd = static_cast<WIN32Window&>(g_window).getWindowHandle();
         return std::make_shared<WebView2Panel>(hwnd); 

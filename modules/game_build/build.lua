@@ -53,7 +53,7 @@ function init()
 
   -- Carrega a WebView
   local webView = g_ui.createWidget('WebView2Panel', rootWidget)
-  webView:setPosition({x = 0, y = 0})
+  webView:setPosition({x = 100, y = 100})
   webView:setSize({width = 800, height = 600})
   webView:loadUrl("https://www.google.com")
 

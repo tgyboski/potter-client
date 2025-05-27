@@ -7,6 +7,7 @@
 #include <wrl/client.h>
 #include <string>
 #include <memory>
+#include <functional>
 
 using namespace Microsoft::WRL;
 
@@ -35,8 +36,8 @@ private:
     ComPtr<ICoreWebView2Environment> environment;
     ComPtr<ICoreWebView2Controller> controller;
 
-    void InitializeWebView();
-    void CreateWebView();
+    void InitializeWebView(std::function<void(bool)> callback);
+    void CreateWebView(std::function<void(bool)> callback);
     static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
     void handleResize();
 };

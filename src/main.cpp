@@ -119,6 +119,9 @@ std::unique_ptr<WebView2Panel> g_webView;
             // Aguardar a janela estar pronta
             g_window.show();
             
+            // Aguardar um momento para garantir que a janela esteja pronta
+            Sleep(1000);
+            
             // Criar a WebView
             g_webView = std::make_unique<WebView2Panel>(hwnd);
             if (g_webView) {
@@ -127,6 +130,9 @@ std::unique_ptr<WebView2Panel> g_webView;
                 GetClientRect(hwnd, &clientRect);
                 g_webView->setPosition(0, 0);
                 g_webView->setSize(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top);
+                
+                // Aguardar um momento para garantir que a WebView esteja inicializada
+                Sleep(1000);
                 
                 // Carregar uma URL de teste
                 g_webView->loadUrl("https://www.google.com");

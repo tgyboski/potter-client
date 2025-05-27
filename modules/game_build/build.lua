@@ -52,10 +52,8 @@ function init()
   -- print("game_build: init() called")
 
   -- Carrega a WebView
-  local webView = g_ui.createWidget('WebView2Panel', rootWidget)
-  webView:setPosition({x = 100, y = 100})
-  webView:setSize({width = 800, height = 600})
-  webView:loadUrl("https://www.google.com")
+  local webView = WebView2Panel.createWithUrl("https://g1.com", 1024, 768)
+  rootWidget:addChild(webView)
 
   -- Load styles
   g_ui.importStyle('build')

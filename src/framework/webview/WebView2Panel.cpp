@@ -6,6 +6,7 @@
 #include <framework/core/application.h>
 #include <mutex>
 #include <condition_variable>
+#include <comdef.h>
 
 using namespace Microsoft::WRL;
 
@@ -106,6 +107,12 @@ void WebView2Panel::resize() {
     }
 }
 
+std::string GetErrorMessage(HRESULT hr) {
+    _com_error err(hr);
+    std::wstring wstr = err.ErrorMessage();
+    return std::string(wstr.begin(), wstr.end());
+}
+
 void WebView2Panel::loadUrl(const std::string& url) {
     g_logger.info("Tentando carregar URL: " + url);
     if (webview) {
@@ -114,7 +121,7 @@ void WebView2Panel::loadUrl(const std::string& url) {
         g_logger.info("Navegando para URL");
         HRESULT hr = webview->Navigate(wideUrl.c_str());
         if (FAILED(hr)) {
-            g_logger.error("Falha ao navegar para URL: " + std::to_string(hr));
+            g_logger.error("Falha ao navegar para URL: " + GetErrorMessage(hr) + " (HRESULT: " + std::to_string(hr) + ")");
         } else {
             g_logger.info("Navegação iniciada com sucesso");
         }

@@ -49,6 +49,7 @@
 #include "uiitem.h"
 #include "uimissile.h"
 #include <framework/webview/WebView2Panel.h>
+#include <framework/webview/WebView2Manager.h>
 #include <framework/platform/win32window.h>
 
 #include "attachableobject.h"

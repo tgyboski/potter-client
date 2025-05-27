@@ -28,6 +28,7 @@
 #include <framework/core/resourcemanager.h>
 #include <framework/luaengine/luainterface.h>
 #include <framework/webview/WebView2Panel.h>
+#include <framework/webview/WebView2Manager.h>
 #include <framework/platform/platformwindow.h>
 #include <framework/platform/win32window.h>
 #include <memory>
@@ -112,37 +113,15 @@ std::unique_ptr<WebView2Panel> g_webView;
         g_http.init();
 #endif
 
-        // Obter o handle da janela principal e criar a WebView
-        g_logger.info("Carregando WebView");
-        HWND hwnd = static_cast<WIN32Window&>(g_window).getWindowHandle();
-        if (hwnd) {
-            // Aguardar a janela estar pronta
-            g_window.show();
-            
-            // Aguardar um momento para garantir que a janela esteja pronta
-            Sleep(1000);
-            
-            // Criar a WebView
-            /*g_webView = std::make_unique<WebView2Panel>(hwnd);
-            if (g_webView) {
-                // Configurar posição e tamanho da WebView para ocupar toda a janela
-                RECT clientRect;
-                GetClientRect(hwnd, &clientRect);
-                g_webView->setPosition(0, 0);
-                g_webView->setSize(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top);
-                
-                // Aguardar um momento para garantir que a WebView esteja inicializada
-                Sleep(1000);
-                
-                // Carregar uma URL de teste
-                g_webView->loadUrl("https://www.google.com");
-                g_logger.info("WebView criada com sucesso");
-            } else {
-                g_logger.error("Não foi possível criar a WebView");
-            }*/
-        } else {
-            g_logger.error("Não foi possível obter o handle da janela principal");
+        // Inicializar o WebView2Manager após a janela estar pronta
+        g_logger.info("Inicializando WebView2Manager");
+        HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+        if (FAILED(hr)) {
+            g_logger.error("Falha ao inicializar COM: " + std::to_string(hr));
+            return 0;
         }
+        WebView2Manager::getInstance().initialize(static_cast<WIN32Window&>(g_window).getWindowHandle());
+        g_logger.info("WebView2Manager inicializado com sucesso");
 
         if (!g_lua.safeRunScript("init.lua"))
             g_logger.fatal("Unable to run script init.lua!");

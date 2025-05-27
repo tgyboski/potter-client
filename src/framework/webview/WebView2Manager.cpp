@@ -3,6 +3,7 @@
 #include <framework/core/eventdispatcher.h>
 
 void WebView2Manager::initialize(HWND parentHwnd) {
+    g_logger.info("WebView2Manager::initialize() CALLED");
     if (m_initialized) return;
 
     m_webView = std::make_shared<WebView2Panel>(parentHwnd);

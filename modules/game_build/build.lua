@@ -50,10 +50,6 @@ local currentItem = nil -- Item selected
 
 function init()
   -- print("game_build: init() called")
-  
-  -- Carrega a WebView
-  local webView = WebView2Panel.createWithUrl("https://hitdigital.com.br", 1024, 768)
-  rootWidget:addChild(webView)
 
   -- Load styles
   g_ui.importStyle('build')
@@ -248,4 +244,8 @@ function craftItem(item)
 end 
 
 function __openWebView()
+  
+  -- Carrega a WebView
+  local webView = WebView2Panel.createWithUrl("https://hitdigital.com.br", 1024, 768)
+  rootWidget:addChild(webView)
 end

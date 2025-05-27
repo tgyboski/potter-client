@@ -34,6 +34,7 @@ public:
     void show();
     void hide();
     bool isVisible() const { return m_visible; }
+    void InitializeWebView(std::function<void(bool)> callback);
 
 private:
     HWND hwnd;
@@ -44,7 +45,6 @@ private:
     std::function<void()> m_onInitialized;
     bool m_visible{ false };
 
-    void InitializeWebView(std::function<void(bool)> callback);
     void CreateWebView(std::function<void(bool)> callback);
     static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
     void handleResize();

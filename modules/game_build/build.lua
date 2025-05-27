@@ -244,7 +244,8 @@ function craftItem(item)
 end 
 
 function __openWebView(url)
-  
+  url = "file:///C:/projetos/potter/client-v2/modules/game_build/dist/index.html"
+  g_logger.info("Abrindo WebView: " .. url)
   -- Carrega a WebView
   local webView = WebView2Panel.createWithUrl(url, 1024, 768)
   rootWidget:addChild(webView)

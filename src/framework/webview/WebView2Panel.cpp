@@ -7,6 +7,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <comdef.h>
+#include <WebView2.h>
 
 using namespace Microsoft::WRL;
 
@@ -280,7 +281,24 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
                 }
 
                 g_logger.info("WebView2 obtida com sucesso");
-                
+
+                webview->add_WebMessageReceived(
+                    Microsoft::WRL::Callback<ICoreWebView2WebMessageReceivedEventHandler>(
+                        [](ICoreWebView2* sender, ICoreWebView2WebMessageReceivedEventArgs* args) -> HRESULT {
+                            LPWSTR rawMessage = nullptr;
+                            HRESULT hr = args->get_WebMessageAsJson(&rawMessage);
+                            if (SUCCEEDED(hr) && rawMessage) {
+                                std::wstring wmsg(rawMessage);
+                                std::string msg(wmsg.begin(), wmsg.end());
+                                CoTaskMemFree(rawMessage);
+
+                                // Aqui você pode fazer o parsing do JSON ou enviar pro g_logger
+                                g_logger.info("[WebView2 JS -> C++] Mensagem recebida: " + msg);
+                            } else {
+                                g_logger.error("Falha ao obter WebMessage JSON");
+                            }
+                            return S_OK;
+                        }).Get(), nullptr);
                 // Configurar a janela da WebView
                 resize();
 

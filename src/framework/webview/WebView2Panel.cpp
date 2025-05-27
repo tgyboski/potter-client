@@ -29,6 +29,9 @@ WebView2Panel::WebView2Panel(HWND parentHwnd) : UIWidget(), hwnd(nullptr), paren
     RECT parentRect;
     GetClientRect(parentHwnd, &parentRect);
 
+    // Armazenar o ponteiro da instância antes de criar a janela
+    g_currentInstance = this;
+
     hwnd = CreateWindowExA(
         WS_EX_CLIENTEDGE,
         "WebView2PanelClass",
@@ -38,7 +41,7 @@ WebView2Panel::WebView2Panel(HWND parentHwnd) : UIWidget(), hwnd(nullptr), paren
         parentHwnd,
         NULL,
         GetModuleHandle(NULL),
-        NULL
+        this  // Passar o ponteiro this como lParam
     );
 
     if (!hwnd) {
@@ -47,9 +50,6 @@ WebView2Panel::WebView2Panel(HWND parentHwnd) : UIWidget(), hwnd(nullptr), paren
     }
 
     g_logger.info("Janela da WebView criada com sucesso");
-
-    // Armazenar o ponteiro da instância
-    g_currentInstance = this;
 
     // Inicializar WebView de forma assíncrona
     InitializeWebView([this](bool success) {
@@ -109,21 +109,28 @@ void WebView2Panel::resize() {
 
 std::string GetErrorMessage(HRESULT hr) {
     _com_error err(hr);
-    std::wstring wstr = err.ErrorMessage();
-    return std::string(wstr.begin(), wstr.end());
+    LPCTSTR errorMessage = err.ErrorMessage();
+    if (errorMessage) {
+        #ifdef UNICODE
+            std::wstring wstr(errorMessage);
+            return std::string(wstr.begin(), wstr.end());
+        #else
+            return std::string(errorMessage);
+        #endif
+    }
+    return "Erro desconhecido";
 }
 
 void WebView2Panel::loadUrl(const std::string& url) {
     g_logger.info("Tentando carregar URL: " + url);
     if (webview) {
-        g_logger.info("WebView está disponível, convertendo URL para wide string");
-        std::wstring wideUrl(url.begin(), url.end());
-        g_logger.info("Navegando para URL");
-        HRESULT hr = webview->Navigate(wideUrl.c_str());
-        if (FAILED(hr)) {
-            g_logger.error("Falha ao navegar para URL: " + GetErrorMessage(hr) + " (HRESULT: " + std::to_string(hr) + ")");
+        g_logger.info("Postando mensagem para thread principal");
+        BOOL result = PostMessage(hwnd, WM_APP + 1, 0, (LPARAM)new std::string(url));
+        if (!result) {
+            DWORD error = GetLastError();
+            g_logger.error("Falha ao postar mensagem: " + std::to_string(error));
         } else {
-            g_logger.info("Navegação iniciada com sucesso");
+            g_logger.info("Mensagem postada com sucesso");
         }
     } else {
         g_logger.error("WebView não inicializada");
@@ -139,25 +146,54 @@ void WebView2Panel::handleResize() {
 }
 
 LRESULT CALLBACK WebView2Panel::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-    WebView2Panel* panel = reinterpret_cast<WebView2Panel*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    WebView2Panel* panel = nullptr;
+
+    if (msg == WM_CREATE) {
+        CREATESTRUCT* cs = reinterpret_cast<CREATESTRUCT*>(lParam);
+        panel = reinterpret_cast<WebView2Panel*>(cs->lpCreateParams);
+        SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(panel));
+        g_logger.info("WM_CREATE: Panel armazenado");
+    } else {
+        panel = reinterpret_cast<WebView2Panel*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    }
+
+    if (!panel) {
+        g_logger.error("Panel não encontrado no WindowProc");
+        return DefWindowProc(hwnd, msg, wParam, lParam);
+    }
 
     switch (msg) {
-        case WM_CREATE:
-            // Armazenar o ponteiro da instância
-            SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(g_currentInstance));
+        case WM_SIZE:
+            panel->handleResize();
             break;
             
-        case WM_SIZE:
-            if (panel) {
-                panel->handleResize();
+        case WM_APP + 1: // Mensagem personalizada para navegação
+            g_logger.info("Mensagem de navegação recebida");
+            if (panel->webview) {
+                g_logger.info("WebView disponível");
+                std::string* url = reinterpret_cast<std::string*>(lParam);
+                if (url) {
+                    g_logger.info("URL recebida: " + *url);
+                    std::wstring wideUrl(url->begin(), url->end());
+                    HRESULT hr = panel->webview->Navigate(wideUrl.c_str());
+                    if (FAILED(hr)) {
+                        g_logger.error("Falha ao navegar para URL: " + GetErrorMessage(hr) + " (HRESULT: " + std::to_string(hr) + ")");
+                    } else {
+                        g_logger.info("Navegação iniciada com sucesso");
+                    }
+                    delete url;
+                } else {
+                    g_logger.error("URL é nula");
+                }
+            } else {
+                g_logger.error("WebView não disponível");
             }
-            break;
+            return 0;
             
         case WM_PAINT:
             {
                 PAINTSTRUCT ps;
                 HDC hdc = BeginPaint(hwnd, &ps);
-                // Preencher o fundo com branco
                 RECT rect;
                 GetClientRect(hwnd, &rect);
                 HBRUSH hBrush = CreateSolidBrush(RGB(255, 255, 255));

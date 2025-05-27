@@ -9,10 +9,10 @@ local categories = {
     isActive = true, 
     button = nil,
     items = {
-      { name = "Parede de madeira horizontal", displayId = 1282, category = 1, description = "Parede de madeira", ingredients = "2x Wood", id = 1 },
-      { name = "Parede de madeira vertical", displayId = 1286, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isNew = true, id = 2 },
-      { name = "Parede de madeira superior esquerdo", displayId = 1283, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isDisabled = true, id = 3 },
-      { name = "Parede de madeira inferior direito", displayId = 1285, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isDisabled = true, id = 4 }
+      { name = "Parede de madeira horizontal", displayId = 1282, category = 1, description = "Parede de madeira", ingredients = "2x Wood", id = 1, url = "https://hitdigital.com.br" },
+      { name = "Parede de madeira vertical", displayId = 1286, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isNew = true, id = 2, url = "https://google.com" },
+      { name = "Parede de madeira superior esquerdo", displayId = 1283, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isDisabled = false, id = 3, url = "https://facebook.com" },
+      { name = "Parede de madeira inferior direito", displayId = 1285, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isDisabled = true, id = 4, url = "https://twitter.com" }
     }
   },
   { 
@@ -207,7 +207,7 @@ function onItemHover(itemBox)
 end
 
 function onItemClick(item)
-  __openWebView()
+  __openWebView(item.url)
   return
 
   --[[
@@ -243,9 +243,9 @@ function craftItem(item)
     :show()
 end 
 
-function __openWebView()
+function __openWebView(url)
   
   -- Carrega a WebView
-  local webView = WebView2Panel.createWithUrl("https://hitdigital.com.br", 1024, 768)
+  local webView = WebView2Panel.createWithUrl(url, 1024, 768)
   rootWidget:addChild(webView)
 end

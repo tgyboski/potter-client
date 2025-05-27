@@ -9,10 +9,10 @@ local categories = {
     isActive = true, 
     button = nil,
     items = {
-      { name = "Parede de madeira horizontal", displayId = 1282, category = 1, description = "Parede de madeira", ingredients = "2x Wood", id = 1, url = "file://" .. g_resources.getWorkDir() .. "/modules/game_build/dist/index.html#/" },
-      { name = "Parede de madeira vertical", displayId = 1286, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isNew = true, id = 2, url = "file://" .. g_resources.getWorkDir() .. "/modules/game_build/dist/index.html#/teste2" },
-      { name = "Parede de madeira superior esquerdo", displayId = 1283, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isDisabled = false, id = 3, url = "https://facebook.com" },
-      { name = "Parede de madeira inferior direito", displayId = 1285, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isDisabled = true, id = 4, url = "https://twitter.com" }
+      { name = "Parede de madeira horizontal", displayId = 1282, category = 1, description = "Parede de madeira", ingredients = "2x Wood", id = 1, url = "file://" .. g_resources.getWorkDir() .. "/modules/game_build/dist/index.html#/", size = 1024 },
+      { name = "Parede de madeira vertical", displayId = 1286, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isNew = true, id = 2, url = "file://" .. g_resources.getWorkDir() .. "/modules/game_build/dist/index.html#/teste2", size = 800 },
+      { name = "Parede de madeira superior esquerdo", displayId = 1283, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isDisabled = false, id = 3, url = "file://" .. g_resources.getWorkDir() .. "/modules/game_build/dist/index.html#/teste3", size = 1500 },
+      { name = "Parede de madeira inferior direito", displayId = 1285, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isDisabled = true, id = 4, url = "file://" .. g_resources.getWorkDir() .. "/modules/game_build/dist/index.html#/teste4", size = 1200 }
     }
   },
   { 
@@ -42,6 +42,9 @@ local categories = {
 }
 local currentCategory = nil -- Category selected
 local currentItem = nil -- Item selected
+
+-- Variável global para rastrear a WebView atual
+local currentWebView = nil
 
 -- Registra as funções no módulo
 -- modules.game_build.open = open
@@ -207,7 +210,7 @@ function onItemHover(itemBox)
 end
 
 function onItemClick(item)
-  __openWebView(item.data.url)
+  __openWebView(item.data.url, item.data.size)
   return
 
   --[[
@@ -243,10 +246,17 @@ function craftItem(item)
     :show()
 end 
 
-function __openWebView(url)
-  url = "file:///C:/projetos/potter/client-v2/modules/game_build/dist/index.html"
+function __openWebView(url, size)
   g_logger.info("Abrindo WebView: " .. url)
-  -- Carrega a WebView
-  local webView = WebView2Panel.createWithUrl(url, 1024, 768)
-  rootWidget:addChild(webView)
+  
+  -- Se já existe uma WebView, apenas atualiza a URL
+  if currentWebView then
+    currentWebView:setSize(size, size)
+    currentWebView:loadUrl(url)
+    return
+  end
+  
+  -- Cria nova WebView se não existir
+  currentWebView = WebView2Panel.createWithUrl(url, size, size)
+  rootWidget:addChild(currentWebView)
 end

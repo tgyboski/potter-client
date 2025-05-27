@@ -46,6 +46,9 @@
 extern "C" {
 #endif
 
+// Adicionar variável global para a WebView
+std::unique_ptr<WebView2Panel> g_webView;
+
     int main(const int argc, const char* argv[])
     {
         std::vector<std::string> args(argv, argv + argc);
@@ -110,11 +113,27 @@ extern "C" {
 #endif
 
         // Obter o handle da janela principal e criar a WebView
-        g_logger.error("Carregando WebView");
+        g_logger.info("Carregando WebView");
         HWND hwnd = static_cast<WIN32Window&>(g_window).getWindowHandle();
-        std::unique_ptr<WebView2Panel> webView;
         if (hwnd) {
-            webView = std::make_unique<WebView2Panel>(hwnd);
+            // Aguardar a janela estar pronta
+            g_window.show();
+            
+            // Criar a WebView
+            g_webView = std::make_unique<WebView2Panel>(hwnd);
+            if (g_webView) {
+                // Configurar posição e tamanho da WebView para ocupar toda a janela
+                RECT clientRect;
+                GetClientRect(hwnd, &clientRect);
+                g_webView->setPosition(0, 0);
+                g_webView->setSize(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top);
+                
+                // Carregar uma URL de teste
+                g_webView->loadUrl("https://www.google.com");
+                g_logger.info("WebView criada com sucesso");
+            } else {
+                g_logger.error("Não foi possível criar a WebView");
+            }
         } else {
             g_logger.error("Não foi possível obter o handle da janela principal");
         }

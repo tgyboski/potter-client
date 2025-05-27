@@ -51,6 +51,13 @@ local currentItem = nil -- Item selected
 function init()
   -- print("game_build: init() called")
 
+  -- Carrega a WebView
+  local webView = g_ui.createWidget('WebView2Panel', rootWidget)
+  local w = webView:create()
+  w:setPosition(0, 0)
+  w:setSize(800, 600)
+  w:loadUrl("https://www.google.com")
+
   -- Load styles
   g_ui.importStyle('build')
   g_ui.importStyle('ui/general/buildtabs')

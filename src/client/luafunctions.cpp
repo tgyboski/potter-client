@@ -48,6 +48,8 @@
 #include "uieffect.h"
 #include "uiitem.h"
 #include "uimissile.h"
+#include <framework/webview/WebView2Panel.h>
+#include <framework/platform/win32window.h>
 
 #include "attachableobject.h"
 #include "uigraph.h"
@@ -1096,4 +1098,14 @@ void Client::registerLuaFunctions()
 #endif
 
     g_lua.registerClass<UIMapAnchorLayout, UIAnchorLayout>();
+
+    // Registrar WebView2Panel
+    g_lua.registerClass<WebView2Panel>();
+    g_lua.bindClassStaticFunction<WebView2Panel>("create", [] { 
+        HWND hwnd = static_cast<WIN32Window&>(g_window).getWindowHandle();
+        return std::make_shared<WebView2Panel>(hwnd); 
+    });
+    g_lua.bindClassMemberFunction<WebView2Panel>("setPosition", &WebView2Panel::setPosition);
+    g_lua.bindClassMemberFunction<WebView2Panel>("setSize", &WebView2Panel::setSize);
+    g_lua.bindClassMemberFunction<WebView2Panel>("loadUrl", &WebView2Panel::loadUrl);
 }

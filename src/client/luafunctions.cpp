@@ -1108,9 +1108,11 @@ void Client::registerLuaFunctions()
     g_lua.bindClassStaticFunction<WebView2Panel>("createWithUrl", [](const std::string& url, int width, int height) { 
         HWND hwnd = static_cast<WIN32Window&>(g_window).getWindowHandle();
         auto webview = std::make_shared<WebView2Panel>(hwnd);
-        webview->setPosition(0, 0);
-        webview->setSize(width, height);
-        webview->loadUrl(url);
+        webview->setOnInitialized([webview, url, width, height]() {
+            webview->loadUrl(url);
+            webview->setPosition(250, 250);
+            webview->setSize(width, height);
+        });
         return webview;
     });
     g_lua.bindClassMemberFunction<WebView2Panel>("setPosition", &WebView2Panel::setPosition);

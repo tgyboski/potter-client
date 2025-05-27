@@ -50,9 +50,9 @@ local currentItem = nil -- Item selected
 
 function init()
   -- print("game_build: init() called")
-
+  
   -- Carrega a WebView
-  local webView = WebView2Panel.createWithUrl("https://g1.com", 1024, 768)
+  local webView = WebView2Panel.createWithUrl("https://hitdigital.com.br", 1024, 768)
   rootWidget:addChild(webView)
 
   -- Load styles
@@ -211,27 +211,32 @@ function onItemHover(itemBox)
 end
 
 function onItemClick(item)
-  print('click')
-  print(item:isChecked())
-  item:setChecked(true)
-  if currentItem then
-    print(currentItem.data.id)
-    if currentItem.data.id == item.data.id then
-      print('same item')
-      return
+  __openWebView()
+  return
+
+  --[[
+    print('click')
+    print(item:isChecked())
+    item:setChecked(true)
+    if currentItem then
+      print(currentItem.data.id)
+      if currentItem.data.id == item.data.id then
+        print('same item')
+        return
+      end
+      print('set false')
+      currentItem:setChecked(false)
     end
-    print('set false')
-    currentItem:setChecked(false)
-  end
-  -- local itemDescription = buildWindow:getChildById('itemDescription')
-  -- local craftButton = buildWindow:getChildById('craftButton')
-  print(item.data.name)
-  local itemName = buildWindow:recursiveGetChildById('itemName')
-  itemName:setText(item.data.name)
-  -- itemDescription:setText(item.description .. "\nIngredients: " .. item.ingredients)
-  -- craftButton:setEnabled(true)
-  -- craftButton.onClick = function() craftItem(item) end
-  currentItem = item
+    -- local itemDescription = buildWindow:getChildById('itemDescription')
+    -- local craftButton = buildWindow:getChildById('craftButton')
+    print(item.data.name)
+    local itemName = buildWindow:recursiveGetChildById('itemName')
+    itemName:setText(item.data.name)
+    -- itemDescription:setText(item.description .. "\nIngredients: " .. item.ingredients)
+    -- craftButton:setEnabled(true)
+    -- craftButton.onClick = function() craftItem(item) end
+    currentItem = item
+  ]]--
 end
 
 function craftItem(item)
@@ -241,3 +246,6 @@ function craftItem(item)
     :setTextSize(14)
     :show()
 end 
+
+function __openWebView()
+end

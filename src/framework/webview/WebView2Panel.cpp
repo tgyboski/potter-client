@@ -54,8 +54,9 @@ WebView2Panel::WebView2Panel(HWND parentHwnd) : UIWidget(), hwnd(nullptr), paren
     InitializeWebView([this](bool success) {
         if (success) {
             g_logger.info("WebView2 inicializada com sucesso");
-            // Carregar uma página inicial
-            loadUrl("https://www.google.com");
+            if (m_onInitialized) {
+                m_onInitialized();
+            }
         } else {
             g_logger.error("Falha ao inicializar WebView2");
         }

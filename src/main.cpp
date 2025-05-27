@@ -123,7 +123,7 @@ std::unique_ptr<WebView2Panel> g_webView;
             Sleep(1000);
             
             // Criar a WebView
-            g_webView = std::make_unique<WebView2Panel>(hwnd);
+            /*g_webView = std::make_unique<WebView2Panel>(hwnd);
             if (g_webView) {
                 // Configurar posição e tamanho da WebView para ocupar toda a janela
                 RECT clientRect;
@@ -139,7 +139,7 @@ std::unique_ptr<WebView2Panel> g_webView;
                 g_logger.info("WebView criada com sucesso");
             } else {
                 g_logger.error("Não foi possível criar a WebView");
-            }
+            }*/
         } else {
             g_logger.error("Não foi possível obter o handle da janela principal");
         }

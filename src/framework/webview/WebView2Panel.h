@@ -25,6 +25,7 @@ public:
     void loadUrl(const std::string& url);
     void resize();
     HWND getHwnd() const { return hwnd; }
+    void setOnInitialized(std::function<void()> callback) { m_onInitialized = callback; }
 
     // Funções herdadas de UIWidget
     void drawSelf(DrawPoolType drawPane) override;
@@ -35,6 +36,7 @@ private:
     ComPtr<ICoreWebView2> webview;
     ComPtr<ICoreWebView2Environment> environment;
     ComPtr<ICoreWebView2Controller> controller;
+    std::function<void()> m_onInitialized;
 
     void InitializeWebView(std::function<void(bool)> callback);
     void CreateWebView(std::function<void(bool)> callback);

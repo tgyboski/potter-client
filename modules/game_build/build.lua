@@ -9,8 +9,8 @@ local categories = {
     isActive = true, 
     button = nil,
     items = {
-      { name = "Parede de madeira horizontal", displayId = 1282, category = 1, description = "Parede de madeira", ingredients = "2x Wood", id = 1, url = "https://hitdigital.com.br" },
-      { name = "Parede de madeira vertical", displayId = 1286, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isNew = true, id = 2, url = "https://google.com" },
+      { name = "Parede de madeira horizontal", displayId = 1282, category = 1, description = "Parede de madeira", ingredients = "2x Wood", id = 1, url = "file://" .. g_resources.getWorkDir() .. "/modules/game_build/dist/index.html#/" },
+      { name = "Parede de madeira vertical", displayId = 1286, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isNew = true, id = 2, url = "file://" .. g_resources.getWorkDir() .. "/modules/game_build/dist/index.html#/teste2" },
       { name = "Parede de madeira superior esquerdo", displayId = 1283, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isDisabled = false, id = 3, url = "https://facebook.com" },
       { name = "Parede de madeira inferior direito", displayId = 1285, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isDisabled = true, id = 4, url = "https://twitter.com" }
     }

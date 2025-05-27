@@ -10,7 +10,7 @@ using namespace Microsoft::WRL;
 // Ponteiro global para a instância atual (para uso no WindowProc)
 static WebView2Panel* g_currentInstance = nullptr;
 
-WebView2Panel::WebView2Panel(HWND parentHwnd) : hwnd(nullptr), parentHwnd(parentHwnd) {
+WebView2Panel::WebView2Panel(HWND parentHwnd) : UIWidget(), hwnd(nullptr), parentHwnd(parentHwnd) {
     // Criar uma janela filha para a WebView
     WNDCLASSEXA wc = {0};
     wc.cbSize = sizeof(WNDCLASSEXA);
@@ -57,6 +57,46 @@ WebView2Panel::~WebView2Panel() {
     webview.Reset();
     controller.Reset();
     environment.Reset();
+}
+
+void WebView2Panel::drawSelf(DrawPoolType drawPane) {
+    // Não precisamos desenhar nada aqui, pois a WebView2 se desenha sozinha
+}
+
+void WebView2Panel::setPosition(int x, int y) {
+    if (hwnd) {
+        SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+    }
+}
+
+void WebView2Panel::setSize(int width, int height) {
+    if (hwnd) {
+        SetWindowPos(hwnd, NULL, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER);
+        resize();
+    }
+}
+
+void WebView2Panel::resize() {
+    if (controller) {
+        RECT bounds;
+        GetClientRect(hwnd, &bounds);
+        controller->put_Bounds(bounds);
+    }
+}
+
+void WebView2Panel::loadUrl(const std::string& url) {
+    if (webview) {
+        std::wstring wideUrl(url.begin(), url.end());
+        webview->Navigate(wideUrl.c_str());
+    }
+}
+
+void WebView2Panel::handleResize() {
+    if (controller) {
+        RECT bounds;
+        GetClientRect(hwnd, &bounds);
+        controller->put_Bounds(bounds);
+    }
 }
 
 LRESULT CALLBACK WebView2Panel::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -133,41 +173,5 @@ void WebView2Panel::CreateWebView() {
 
     if (FAILED(hr)) {
         g_logger.error("Falha ao iniciar criação do controlador WebView2");
-    }
-}
-
-void WebView2Panel::setPosition(int x, int y) {
-    if (hwnd) {
-        SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
-    }
-}
-
-void WebView2Panel::setSize(int width, int height) {
-    if (hwnd) {
-        SetWindowPos(hwnd, NULL, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER);
-        resize();
-    }
-}
-
-void WebView2Panel::resize() {
-    if (controller) {
-        RECT bounds;
-        GetClientRect(hwnd, &bounds);
-        controller->put_Bounds(bounds);
-    }
-}
-
-void WebView2Panel::loadUrl(const std::string& url) {
-    if (webview) {
-        std::wstring wideUrl(url.begin(), url.end());
-        webview->Navigate(wideUrl.c_str());
-    }
-}
-
-void WebView2Panel::handleResize() {
-    if (controller) {
-        RECT bounds;
-        GetClientRect(hwnd, &bounds);
-        controller->put_Bounds(bounds);
     }
 }

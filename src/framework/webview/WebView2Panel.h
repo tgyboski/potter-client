@@ -1,6 +1,6 @@
 #pragma once
 
-#include <framework/luaengine/luaobject.h>
+#include <framework/ui/uiwidget.h>
 #include <windows.h>
 #include <WebView2.h>
 #include <wrl.h>
@@ -10,7 +10,7 @@
 
 using namespace Microsoft::WRL;
 
-class WebView2Panel : public LuaObject {
+class WebView2Panel : public UIWidget {
 public:
     WebView2Panel(HWND parentHwnd);
     ~WebView2Panel();
@@ -24,6 +24,9 @@ public:
     void loadUrl(const std::string& url);
     void resize();
     HWND getHwnd() const { return hwnd; }
+
+    // Funções herdadas de UIWidget
+    void drawSelf(DrawPoolType drawPane) override;
 
 private:
     HWND hwnd;

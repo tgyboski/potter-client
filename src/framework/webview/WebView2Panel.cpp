@@ -278,3 +278,19 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
         callback(false);
     }
 }
+
+void WebView2Panel::show() {
+    if (!m_visible && hwnd) {
+        ShowWindow(hwnd, SW_SHOW);
+        UpdateWindow(hwnd);
+        m_visible = true;
+    }
+}
+
+void WebView2Panel::hide() {
+    if (m_visible && hwnd) {
+        ShowWindow(hwnd, SW_HIDE);
+        UpdateWindow(hwnd);
+        m_visible = false;
+    }
+}

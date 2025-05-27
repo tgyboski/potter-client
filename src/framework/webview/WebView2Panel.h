@@ -30,6 +30,11 @@ public:
     // Funções herdadas de UIWidget
     void drawSelf(DrawPoolType drawPane) override;
 
+    // Novos métodos para controle de visibilidade
+    void show();
+    void hide();
+    bool isVisible() const { return m_visible; }
+
 private:
     HWND hwnd;
     HWND parentHwnd;
@@ -37,6 +42,7 @@ private:
     ComPtr<ICoreWebView2Environment> environment;
     ComPtr<ICoreWebView2Controller> controller;
     std::function<void()> m_onInitialized;
+    bool m_visible{ false };
 
     void InitializeWebView(std::function<void(bool)> callback);
     void CreateWebView(std::function<void(bool)> callback);

@@ -207,7 +207,7 @@ function onItemHover(itemBox)
 end
 
 function onItemClick(item)
-  __openWebView(item.url)
+  __openWebView(item.data.url)
   return
 
   --[[

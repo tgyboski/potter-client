@@ -27,6 +27,10 @@
 #include <framework/core/application.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/luaengine/luainterface.h>
+#include <framework/webview/WebView2Panel.h>
+#include <framework/platform/platformwindow.h>
+#include <framework/platform/win32window.h>
+#include <memory>
 
 #ifndef ANDROID
 #if ENABLE_DISCORD_RPC == 1
@@ -104,6 +108,16 @@ extern "C" {
 #ifdef FRAMEWORK_NET
         g_http.init();
 #endif
+
+        // Obter o handle da janela principal e criar a WebView
+        g_logger.error("Carregando WebView");
+        HWND hwnd = static_cast<WIN32Window&>(g_window).getWindowHandle();
+        std::unique_ptr<WebView2Panel> webView;
+        if (hwnd) {
+            webView = std::make_unique<WebView2Panel>(hwnd);
+        } else {
+            g_logger.error("Não foi possível obter o handle da janela principal");
+        }
 
         if (!g_lua.safeRunScript("init.lua"))
             g_logger.fatal("Unable to run script init.lua!");

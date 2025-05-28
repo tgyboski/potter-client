@@ -259,11 +259,15 @@ function __openWebView(url, size)
   
   -- Cria nova WebView se não existir
   currentWebView = WebView2Panel.create(url)
-  currentWebView:onMessage("close", function(parameters)
-    -- parameters é uma string JSON com os parâmetros
-    g_logger.info("WEBVIEW CLOSE")
-    currentWebView:hide()
-    -- Aqui você pode fazer o que quiser com os parâmetros
-  end)
+
+  
+  -- Registra o callback mantendo a referência
+  currentWebView:onMessage("close", closeCallback)
   rootWidget:addChild(currentWebView)
+end  
+
+-- Mantém uma referência forte da função de callback
+closeCallback = function(parameters)
+  g_logger.info("WEBVIEW CLOSE")
+  currentWebView:hide()
 end

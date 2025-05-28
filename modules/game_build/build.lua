@@ -11,7 +11,7 @@ local categories = {
     items = {
       { name = "Parede de madeira horizontal", displayId = 1282, category = 1, description = "Parede de madeira", ingredients = "2x Wood", id = 1, url = "file://" .. g_resources.getWorkDir() .. "/modules/game_build/dist/index.html#/", size = 1024 },
       { name = "Parede de madeira vertical", displayId = 1286, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isNew = true, id = 2, url = "file://" .. g_resources.getWorkDir() .. "/modules/game_build/dist/index.html#/teste2", size = 800 },
-      { name = "Parede de madeira superior esquerdo", displayId = 1283, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isDisabled = false, id = 3, url = "file://" .. g_resources.getWorkDir() .. "/modules/game_build/dist/index.html#/teste3", size = 1500 },
+      { name = "Parede de madeira superior esquerdo", displayId = 1283, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isDisabled = false, id = 3, url = "file://" .. g_resources.getWorkDir() .. "/modules/game_build/dist/index.html#/BuildPage", size = 1500 },
       { name = "Parede de madeira inferior direito", displayId = 1285, category = 1, description = "Parede de madeira", ingredients = "2x Wood", isDisabled = true, id = 4, url = "file://" .. g_resources.getWorkDir() .. "/modules/game_build/dist/index.html#/teste4", size = 1200 }
     }
   },

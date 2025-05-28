@@ -1102,8 +1102,17 @@ void Client::registerLuaFunctions()
 
     // Registrar WebView2Panel
     g_lua.registerClass<WebView2Panel, UIWidget>();
-    g_lua.bindClassStaticFunction<WebView2Panel>("create", [] { 
-        return WebView2Manager::getInstance().getWebView(); 
+    g_lua.bindClassStaticFunction<WebView2Panel>("create", [](const std::string& url) { 
+        auto webview = WebView2Manager::getInstance().getWebView();
+        if (!webview) {
+            g_logger.error("WebView2 não inicializada");
+            return webview;
+        }
+        
+        webview->setSize(500,500);
+        webview->show();
+        webview->loadUrl(url);
+        return webview;
     });
     g_lua.bindClassStaticFunction<WebView2Panel>("createWithUrl", [](const std::string& url, int width, int height) { 
         auto webview = WebView2Manager::getInstance().getWebView();

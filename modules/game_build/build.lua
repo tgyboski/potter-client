@@ -250,13 +250,13 @@ function __openWebView(url, size)
   g_logger.info("Abrindo WebView: " .. url)
   
   -- Se já existe uma WebView, apenas atualiza a URL
-  if currentWebView then
+  --[[if currentWebView then
     currentWebView:setSize(size, size)
     currentWebView:loadUrl(url)
     return
-  end
+  end]]--
   
   -- Cria nova WebView se não existir
-  currentWebView = WebView2Panel.createWithUrl(url, size, size)
+  currentWebView = WebView2Panel.create(url)
   rootWidget:addChild(currentWebView)
 end

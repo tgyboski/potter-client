@@ -1130,4 +1130,8 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<WebView2Panel>("setPosition", &WebView2Panel::setPosition);
     g_lua.bindClassMemberFunction<WebView2Panel>("setSize", &WebView2Panel::setSize);
     g_lua.bindClassMemberFunction<WebView2Panel>("loadUrl", &WebView2Panel::loadUrl);
+    
+    // Adicionar funções de eventos
+    g_lua.bindClassMemberFunction<WebView2Panel>("onMessage", &WebView2Panel::onLuaMessage);
+    g_lua.bindClassMemberFunction<WebView2Panel>("removeMessageListener", &WebView2Panel::removeMessageListener);
 }

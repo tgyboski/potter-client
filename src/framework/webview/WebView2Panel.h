@@ -8,6 +8,8 @@
 #include <string>
 #include <memory>
 #include <functional>
+#include <map>
+#include <framework/luaengine/luainterface.h>
 
 using namespace Microsoft::WRL;
 
@@ -36,6 +38,14 @@ public:
     bool isVisible() const { return m_visible; }
     void InitializeWebView(std::function<void(bool)> callback);
 
+    // Sistema de eventos
+    using MessageCallback = std::function<void(const std::string&)>;
+    void onMessage(const std::string& eventName, MessageCallback callback);
+    void removeMessageListener(const std::string& eventName);
+
+    // Suporte para Lua
+    void onLuaMessage(const std::string& eventName, const std::function<void(const std::string&)>& callback);
+
 private:
     HWND hwnd;
     HWND parentHwnd;
@@ -44,8 +54,10 @@ private:
     ComPtr<ICoreWebView2Controller> controller;
     std::function<void()> m_onInitialized;
     bool m_visible{ false };
+    std::map<std::string, MessageCallback> m_messageCallbacks;
 
     void CreateWebView(std::function<void(bool)> callback);
     static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
     void handleResize();
+    void handleWebMessage(const std::string& message);
 };

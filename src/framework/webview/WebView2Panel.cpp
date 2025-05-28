@@ -8,8 +8,10 @@
 #include <condition_variable>
 #include <comdef.h>
 #include <WebView2.h>
+#include <nlohmann/json.hpp>
 
 using namespace Microsoft::WRL;
+using json = nlohmann::json;
 
 // Ponteiro global para a instância atual (para uso no WindowProc)
 static WebView2Panel* g_currentInstance = nullptr;
@@ -284,7 +286,7 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
 
                 webview->add_WebMessageReceived(
                     Microsoft::WRL::Callback<ICoreWebView2WebMessageReceivedEventHandler>(
-                        [](ICoreWebView2* sender, ICoreWebView2WebMessageReceivedEventArgs* args) -> HRESULT {
+                        [this](ICoreWebView2* sender, ICoreWebView2WebMessageReceivedEventArgs* args) -> HRESULT {
                             LPWSTR rawMessage = nullptr;
                             HRESULT hr = args->get_WebMessageAsJson(&rawMessage);
                             if (SUCCEEDED(hr) && rawMessage) {
@@ -292,8 +294,9 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
                                 std::string msg(wmsg.begin(), wmsg.end());
                                 CoTaskMemFree(rawMessage);
 
-                                // Aqui você pode fazer o parsing do JSON ou enviar pro g_logger
+                                // Processa a mensagem usando o novo sistema de eventos
                                 g_logger.info("[WebView2 JS -> C++] Mensagem recebida: " + msg);
+                                handleWebMessage(msg);
                             } else {
                                 g_logger.error("Falha ao obter WebMessage JSON");
                             }
@@ -354,4 +357,50 @@ void WebView2Panel::hide() {
         UpdateWindow(hwnd);
         m_visible = false;
     }
+}
+
+void WebView2Panel::onMessage(const std::string& eventName, MessageCallback callback) {
+    m_messageCallbacks[eventName] = callback;
+}
+
+void WebView2Panel::removeMessageListener(const std::string& eventName) {
+    m_messageCallbacks.erase(eventName);
+}
+
+void WebView2Panel::handleWebMessage(const std::string& message) {
+    try {
+        // Parse do JSON
+        json j = json::parse(message);
+        
+        // Verifica se tem o campo 'event'
+        if (j.contains("event") && j["event"].is_string()) {
+            std::string eventName = j["event"];
+            
+            // Verifica se tem o campo 'parameters'
+            std::string parameters = "";
+            if (j.contains("parameters")) {
+                parameters = j["parameters"].dump();
+            }
+            
+            // Procura o callback registrado para este evento
+            auto it = m_messageCallbacks.find(eventName);
+            if (it != m_messageCallbacks.end()) {
+                it->second(parameters);
+            }
+        }
+    } catch (const std::exception& e) {
+        g_logger.error("Erro ao processar mensagem do WebView2: " + std::string(e.what()));
+    }
+}
+
+void WebView2Panel::onLuaMessage(const std::string& eventName, const std::function<void(const std::string&)>& callback) {
+    g_logger.info("onLuaMessage");
+    onMessage(eventName, [callback](const std::string& parameters) {
+        g_logger.info("onLuaMessage callback");
+        try {
+            callback(parameters);
+        } catch (const std::exception& e) {
+            g_logger.error("Erro ao executar callback Lua: " + std::string(e.what()));
+        }
+    });
 }

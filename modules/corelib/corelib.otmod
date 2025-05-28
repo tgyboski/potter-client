@@ -30,6 +30,8 @@ Module
 
     dofile 'json'
     dofile 'http'
+    
+    dofile 'webview'
     Keybind.init()
   
   @onUnload: Keybind.terminate()

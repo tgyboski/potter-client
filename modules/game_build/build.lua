@@ -43,8 +43,6 @@ local categories = {
 local currentCategory = nil -- Category selected
 local currentItem = nil -- Item selected
 
--- Variável global para rastrear a WebView atual
-local currentWebView = nil
 
 -- Registra as funções no módulo
 -- modules.game_build.open = open
@@ -210,7 +208,7 @@ function onItemHover(itemBox)
 end
 
 function onItemClick(item)
-  __openWebView(item.data.url, item.data.size)
+  openWebView(item.data.url, item.data.size)
   return
 
   --[[
@@ -245,29 +243,3 @@ function craftItem(item)
     :setTextSize(14)
     :show()
 end 
-
-function __openWebView(url, size)
-  g_logger.info("Abrindo WebView: " .. url)
-  
-  -- Se já existe uma WebView, apenas atualiza a URL
-  if currentWebView then
-    -- currentWebView:setSize(size, size)
-    currentWebView:show()
-    currentWebView:loadUrl(url)
-    return
-  end
-  
-  -- Cria nova WebView se não existir
-  currentWebView = WebView2Panel.create(url)
-
-  
-  -- Registra o callback mantendo a referência
-  currentWebView:onMessage("close", closeCallback)
-  rootWidget:addChild(currentWebView)
-end  
-
--- Mantém uma referência forte da função de callback
-closeCallback = function(parameters)
-  g_logger.info("WEBVIEW CLOSE")
-  currentWebView:hide()
-end

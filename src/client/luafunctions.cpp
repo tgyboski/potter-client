@@ -1109,7 +1109,8 @@ void Client::registerLuaFunctions()
             return webview;
         }
         
-        webview->setSize(500,500);
+        auto mainWindow = g_window.getDisplaySize();
+        webview->setSize(mainWindow.width(), mainWindow.height());
         webview->show();
         webview->loadUrl(url);
         return webview;

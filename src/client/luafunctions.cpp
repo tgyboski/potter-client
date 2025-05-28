@@ -1134,4 +1134,7 @@ void Client::registerLuaFunctions()
     // Adicionar funções de eventos
     g_lua.bindClassMemberFunction<WebView2Panel>("onMessage", &WebView2Panel::onLuaMessage);
     g_lua.bindClassMemberFunction<WebView2Panel>("removeMessageListener", &WebView2Panel::removeMessageListener);
+    
+    // Adicionar função destroy
+    g_lua.bindClassMemberFunction<WebView2Panel>("destroy", &WebView2Panel::destroy);
 }

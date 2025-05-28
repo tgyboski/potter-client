@@ -46,6 +46,9 @@ public:
     // Suporte para Lua
     void onLuaMessage(const std::string& eventName, const std::function<void(const std::string&)>& callback);
 
+    // Destruir recursos
+    void destroy();
+
 private:
     HWND hwnd;
     HWND parentHwnd;
@@ -55,6 +58,7 @@ private:
     std::function<void()> m_onInitialized;
     bool m_visible{ false };
     std::map<std::string, MessageCallback> m_messageCallbacks;
+    bool m_destroyed{ false };
 
     void CreateWebView(std::function<void(bool)> callback);
     static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);

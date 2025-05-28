@@ -260,7 +260,8 @@ function __openWebView(url, size)
   currentWebView = WebView2Panel.create(url)
   currentWebView:onMessage("close", function(parameters)
     -- parameters é uma string JSON com os parâmetros
-    g_logger.info("Abrindo loja com parâmetros:", parameters)
+    g_logger.info("WEBVIEW CLOSE")
+    currentWebView:destroy()
     -- Aqui você pode fazer o que quiser com os parâmetros
   end)
   rootWidget:addChild(currentWebView)

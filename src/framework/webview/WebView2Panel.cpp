@@ -67,17 +67,37 @@ WebView2Panel::WebView2Panel(HWND parentHwnd) : UIWidget(), hwnd(nullptr), paren
     });
 }
 
-WebView2Panel::~WebView2Panel() {
-    if (g_currentInstance == this) {
-        g_currentInstance = nullptr;
+void WebView2Panel::destroy() {
+    if (m_destroyed) {
+        return;
     }
-    
-    if (hwnd) {
-        DestroyWindow(hwnd);
+
+    g_logger.info("Destruindo WebView2Panel");
+
+    // Limpar callbacks
+    m_messageCallbacks.clear();
+    m_onInitialized = nullptr;
+
+    // Limpar WebView2
+    if (controller) {
+        controller->Close();
+        controller.Reset();
     }
     webview.Reset();
-    controller.Reset();
     environment.Reset();
+
+    // Destruir janela
+    if (hwnd) {
+        DestroyWindow(hwnd);
+        hwnd = nullptr;
+    }
+
+    m_destroyed = true;
+    g_logger.info("WebView2Panel destruído com sucesso");
+}
+
+WebView2Panel::~WebView2Panel() {
+    destroy();
 }
 
 void WebView2Panel::drawSelf(DrawPoolType drawPane) {

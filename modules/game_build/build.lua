@@ -252,6 +252,7 @@ function __openWebView(url, size)
   -- Se já existe uma WebView, apenas atualiza a URL
   if currentWebView then
     -- currentWebView:setSize(size, size)
+    currentWebView:show()
     currentWebView:loadUrl(url)
     return
   end
@@ -261,7 +262,7 @@ function __openWebView(url, size)
   currentWebView:onMessage("close", function(parameters)
     -- parameters é uma string JSON com os parâmetros
     g_logger.info("WEBVIEW CLOSE")
-    currentWebView:destroy()
+    currentWebView:hide()
     -- Aqui você pode fazer o que quiser com os parâmetros
   end)
   rootWidget:addChild(currentWebView)

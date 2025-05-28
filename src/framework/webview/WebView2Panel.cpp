@@ -415,6 +415,8 @@ void WebView2Panel::handleWebMessage(const std::string& message) {
 
 void WebView2Panel::onLuaMessage(const std::string& eventName, const std::function<void(const std::string&)>& callback) {
     g_logger.info("onLuaMessage");
+    
+    // Criar uma função Lua que será chamada quando a mensagem for recebida
     onMessage(eventName, [callback](const std::string& parameters) {
         g_logger.info("onLuaMessage callback");
         try {

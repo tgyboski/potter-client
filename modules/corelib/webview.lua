@@ -17,7 +17,7 @@ function openWebView(url)
       currentWebView:show()
     end, 100)
     
-    return
+    return currentWebView
   end
   
   -- Cria nova WebView se não existir
@@ -25,11 +25,12 @@ function openWebView(url)
 
   
   -- Registra o callback mantendo a referência
-  currentWebView:onMessage("close", closeCallback)
+  currentWebView:onMessage("close", webviewCloseCallback)
   rootWidget:addChild(currentWebView)
+  return currentWebView
 end
 
-closeCallback = function(parameters)
+webviewCloseCallback = function(parameters)
   g_logger.info("WEBVIEW CLOSE")
   currentWebView:hide()
 end

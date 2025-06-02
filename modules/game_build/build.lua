@@ -24,33 +24,24 @@ local function getBuildableItems()
 end
 
 function onExtendedOpcode(protocol, opcode, buffer)
-  print("1111")
   if opcode ~= OPCODE_CODE_BUILDING_ITEMS then return end
-  print("2222")
   local json_status, json_data =
     pcall(
     function()
       return json.decode(buffer)
     end
   )
-  print("3333")
   if not json_status then
     g_logger.error("WEBVIEW json error: " .. json_data)
     return false
   end
-  print("4444")
   local action = json_data["action"]
   local data = json_data["data"]
   
 
-  print("onExtendedOpcode")
-  print(action)
-  print(data)
   if not action or not data then
-    print("5555")
     return false
   end
-  print("6666")
   
   if action == "getBuildingItems" then
     local url = string.format('BuildWindow')

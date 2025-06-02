@@ -2,7 +2,7 @@
 local currentWebView = nil
 local webviewShowEvent = nil
 
-local function encodeAccents(str)
+local function WebViewEncodeAccents(str)
   if str then
     str = string.gsub(str, "á", "\\u00e1")
     str = string.gsub(str, "à", "\\u00e0")
@@ -46,7 +46,7 @@ function openWebView(url, params)
   if params then
     -- Converte a tabela de parâmetros para JSON e codifica apenas os acentos
     local jsonParams = json.encode(params)
-    local encodedParams = encodeAccents(jsonParams)
+    local encodedParams = WebViewEncodeAccents(jsonParams)
     fullUrl = fullUrl .. "?params=" .. encodedParams
   end
   

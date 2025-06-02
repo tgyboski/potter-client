@@ -378,7 +378,7 @@ public:
     Position getPosition(const InputMessagePtr& msg);
 
 private:
-    bool m_enableSendExtendedOpcode{ false };
+    bool m_enableSendExtendedOpcode{ true };
     bool m_gameInitialized{ false };
     bool m_mapKnown{ false };
     bool m_firstRecv{ true };

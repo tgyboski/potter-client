@@ -78,6 +78,9 @@ public:
     std::string getClipboardText() override;
     std::string getPlatformType() override;
 
+    // Retorna o handle da janela
+    HWND getWindowHandle() const { return m_window; }
+
 protected:
     int internalLoadMouseCursor(const ImagePtr& image, const Point& hotSpot) override;
 
@@ -100,6 +103,6 @@ private:
     EGLDisplay m_eglDisplay;
     EGLSurface m_eglSurface;
 #else
-    HGLRC m_wglContext;
+    HGLRC m_glContext;
 #endif
 };

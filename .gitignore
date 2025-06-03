@@ -1,3 +1,6 @@
+otclient_dx_x64.exe.WebView2/*
+otclient_x64-dbg.exe.WebView2/*
+
 #################
 ## Visual Studio
 #################
@@ -25,6 +28,9 @@ static/
 cmake-build-*/
 vcpkg_installed/
 vc17/
+
+# Exceções para arquivos específicos
+!libs/webview2/x64/WebView2LoaderStatic.lib
 
 # MSTest test Results
 [Tt]est[Rr]esult*/

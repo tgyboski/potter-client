@@ -27,6 +27,11 @@
 #include <framework/core/application.h>
 #include <framework/core/resourcemanager.h>
 #include <framework/luaengine/luainterface.h>
+#include <framework/webview/WebView2Panel.h>
+#include <framework/webview/WebView2Manager.h>
+#include <framework/platform/platformwindow.h>
+#include <framework/platform/win32window.h>
+#include <memory>
 
 #ifndef ANDROID
 #if ENABLE_DISCORD_RPC == 1
@@ -41,6 +46,9 @@
 #ifdef ANDROID
 extern "C" {
 #endif
+
+// Adicionar variável global para a WebView
+std::unique_ptr<WebView2Panel> g_webView;
 
     int main(const int argc, const char* argv[])
     {
@@ -104,6 +112,16 @@ extern "C" {
 #ifdef FRAMEWORK_NET
         g_http.init();
 #endif
+
+        // Inicializar o WebView2Manager após a janela estar pronta
+        g_logger.info("Inicializando WebView2Manager");
+        HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+        if (FAILED(hr)) {
+            g_logger.error("Falha ao inicializar COM: " + std::to_string(hr));
+            return 0;
+        }
+        WebView2Manager::getInstance().initialize(static_cast<WIN32Window&>(g_window).getWindowHandle());
+        g_logger.info("WebView2Manager inicializado com sucesso");
 
         if (!g_lua.safeRunScript("init.lua"))
             g_logger.fatal("Unable to run script init.lua!");

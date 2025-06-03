@@ -53,7 +53,7 @@ WIN32Window::WIN32Window()
     m_eglDisplay = 0;
     m_eglSurface = 0;
 #else
-    m_wglContext = nullptr;
+    m_glContext = nullptr;
 #endif
 
     m_keyMap[VK_ESCAPE] = Fw::KeyEscape;
@@ -381,7 +381,7 @@ void WIN32Window::internalCreateGLContext()
     if (!SetPixelFormat(m_deviceContext, pixelFormat, &pfd))
         g_logger.fatal("Could not set the pixel format");
 
-    if ((m_wglContext = wglCreateContext(m_deviceContext)) == nullptr)
+    if ((m_glContext = wglCreateContext(m_deviceContext)) == nullptr)
         g_logger.fatal("Unable to create GL context");
 #endif
 }
@@ -402,12 +402,12 @@ void WIN32Window::internalDestroyGLContext()
         m_eglDisplay = 0;
     }
 #else
-    if (m_wglContext) {
+    if (m_glContext) {
         if (!wglMakeCurrent(nullptr, nullptr))
             g_logger.error("Release of dc and rc failed.");
-        if (!wglDeleteContext(m_wglContext))
+        if (!wglDeleteContext(m_glContext))
             g_logger.error("Release rendering context failed.");
-        m_wglContext = nullptr;
+        m_glContext = nullptr;
     }
 #endif
 }
@@ -418,7 +418,7 @@ void WIN32Window::internalRestoreGLContext() const
     if (!eglMakeCurrent(m_eglDisplay, m_eglSurface, m_eglSurface, m_eglContext))
         g_logger.fatal("Unable to make current EGL context");
 #else
-    if (!wglMakeCurrent(m_deviceContext, m_wglContext))
+    if (!wglMakeCurrent(m_deviceContext, m_glContext))
         g_logger.fatal("Unable to make current WGL context");
 #endif
 }

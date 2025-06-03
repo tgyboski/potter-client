@@ -48,6 +48,9 @@
 #include "uieffect.h"
 #include "uiitem.h"
 #include "uimissile.h"
+#include <framework/webview/WebView2Panel.h>
+#include <framework/webview/WebView2Manager.h>
+#include <framework/platform/win32window.h>
 
 #include "attachableobject.h"
 #include "uigraph.h"
@@ -1096,4 +1099,58 @@ void Client::registerLuaFunctions()
 #endif
 
     g_lua.registerClass<UIMapAnchorLayout, UIAnchorLayout>();
+
+    // Registrar WebView2Panel
+    g_lua.registerClass<WebView2Panel, UIWidget>();
+    g_lua.bindClassStaticFunction<WebView2Panel>("create", [](const std::string& url) { 
+        auto webview = WebView2Manager::getInstance().getWebView();
+        if (!webview) {
+            g_logger.error("WebView2 não inicializada");
+            return webview;
+        }
+        
+        auto mainWindow = g_window.getDisplaySize();
+        webview->setSize(mainWindow.width(), mainWindow.height());
+        webview->show();
+        
+        // Define o foco após a navegação ser concluída
+        webview->onMessage("navigationCompleted", [webview](const std::string&) {
+            g_logger.info("setar focus 1");
+            SetFocus(webview->getHwnd());
+        });
+        
+        webview->loadUrl(url);
+        return webview;
+    });
+    g_lua.bindClassStaticFunction<WebView2Panel>("createWithUrl", [](const std::string& url, int width, int height) { 
+        auto webview = WebView2Manager::getInstance().getWebView();
+        if (!webview) {
+            g_logger.error("WebView2 não inicializada");
+            return webview;
+        }
+        
+        webview->setSize(width, height);
+        webview->show();
+        
+        // Define o foco após a navegação ser concluída
+        webview->onMessage("navigationCompleted", [webview](const std::string&) {
+            g_logger.info("setar focus 2");
+            SetFocus(webview->getHwnd());
+        });
+        
+        webview->loadUrl(url);
+        return webview;
+    });
+    g_lua.bindClassMemberFunction<WebView2Panel>("setPosition", &WebView2Panel::setPosition);
+    g_lua.bindClassMemberFunction<WebView2Panel>("setSize", &WebView2Panel::setSize);
+    g_lua.bindClassMemberFunction<WebView2Panel>("loadUrl", &WebView2Panel::loadUrl);
+    g_lua.bindClassMemberFunction<WebView2Panel>("show", &WebView2Panel::show);
+    g_lua.bindClassMemberFunction<WebView2Panel>("hide", &WebView2Panel::hide);
+    
+    // Adicionar funções de eventos
+    g_lua.bindClassMemberFunction<WebView2Panel>("onMessage", &WebView2Panel::onLuaMessage);
+    g_lua.bindClassMemberFunction<WebView2Panel>("removeMessageListener", &WebView2Panel::removeMessageListener);
+    
+    // Adicionar função destroy
+    g_lua.bindClassMemberFunction<WebView2Panel>("destroy", &WebView2Panel::destroy);
 }

@@ -1,0 +1,3 @@
+WebView2Panel < UIWidget
+  size: 800 600
+  background-color: red 

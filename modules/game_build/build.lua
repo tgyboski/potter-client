@@ -1,8 +1,14 @@
 local OPCODE_CODE_BUILDING_ITEMS = 10
+local currentBuildState = {
+  isBuilding = false,
+  currentItem = nil,
+  allowedPosition = false
+}
 
 function init()
   modules.game_build = {
-    open = open
+    open = open,
+    getBuildState = function() return currentBuildState end
   }
   ProtocolGame.registerExtendedOpcode(OPCODE_CODE_BUILDING_ITEMS, onExtendedOpcode)
 end
@@ -49,6 +55,8 @@ function onExtendedOpcode(protocol, opcode, buffer)
     webview:onMessage("build", function()
       print("WEBVIEW BUILD!!")
     end)
+  elseif action == "buildItem" then
+    startBuilding(data.item)
   end
 end
 
@@ -69,4 +77,51 @@ function buildItem(item)
     :setText('build ' .. item.name)
     :setTextSize(14)
     :show()
+end
+
+function startBuilding(item)
+  currentBuildState.isBuilding = true
+  currentBuildState.currentItem = item
+  currentBuildState.allowedPosition = true -- Por enquanto sempre permitido
+  
+  -- Atualiza o estado do hover no mapa
+  local gameMap = modules.game_interface.getMapPanel()
+  if gameMap then
+    gameMap:setHoverColor(currentBuildState.allowedPosition and "#00FF00" or "#FF0000")
+  end
+  
+  -- g_game.getProtocolGame():sendExtendedOpcode(10, json.encode({ 
+  --   action = "updateBuildState", 
+  --   data = currentBuildState 
+  -- }))
+end
+
+function stopBuilding()
+  currentBuildState.isBuilding = false
+  currentBuildState.currentItem = nil
+  currentBuildState.allowedPosition = false
+  
+  -- Remove o hover do mapa
+  local gameMap = modules.game_interface.getMapPanel()
+  if gameMap then
+    gameMap:setHoverColor(nil)
+  end
+  
+  g_game.getProtocolGame():sendExtendedOpcode(10, json.encode({ 
+    action = "updateBuildState", 
+    data = currentBuildState 
+  }))
+end
+
+-- Função para atualizar o estado do hover baseado na posição do mouse
+function updateBuildHover(position)
+  if not currentBuildState.isBuilding then return end
+  
+  -- Por enquanto sempre permitido, mas aqui você pode adicionar suas regras
+  currentBuildState.allowedPosition = true
+  
+  local gameMap = modules.game_interface.getMapPanel()
+  if gameMap then
+    gameMap:setHoverColor(currentBuildState.allowedPosition and "#00FF00" or "#FF0000")
+  end
 end 

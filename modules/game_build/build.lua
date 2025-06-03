@@ -1,11 +1,9 @@
-local buildingItems = require('building_items')
 local OPCODE_CODE_BUILDING_ITEMS = 10
 
 function init()
   modules.game_build = {
     open = open
   }
-  scheduleEvent(open, 1000)
   ProtocolGame.registerExtendedOpcode(OPCODE_CODE_BUILDING_ITEMS, onExtendedOpcode)
 end
 
@@ -58,7 +56,7 @@ function open()
   getBuildableItems()
   local url = string.format('BuildWindow')
   
-  webview = openWebView(url, { loading = true })
+  webview = openWebView(url, { success = true, loading = true })
   webview:show()
   webview:onMessage("build", function()
     print("WEBVIEW BUILD!!")

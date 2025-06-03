@@ -340,11 +340,15 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
 
                 webview->add_NavigationCompleted(
                     Callback<ICoreWebView2NavigationCompletedEventHandler>(
-                        [](ICoreWebView2* sender, ICoreWebView2NavigationCompletedEventArgs* args) -> HRESULT {
+                        [this](ICoreWebView2* sender, ICoreWebView2NavigationCompletedEventArgs* args) -> HRESULT {
                             BOOL success;
                             args->get_IsSuccess(&success);
                             if (success) {
                                 g_logger.info("Navegação concluída com sucesso");
+                                // Dispara o evento navigationCompleted
+                                if (m_messageCallbacks.find("navigationCompleted") != m_messageCallbacks.end()) {
+                                    m_messageCallbacks["navigationCompleted"]("");
+                                }
                             } else {
                                 g_logger.error("Falha na navegação");
                             }
@@ -373,6 +377,8 @@ void WebView2Panel::show() {
 
 void WebView2Panel::hide() {
     if (m_visible && hwnd) {
+        // Força a perda de foco antes de esconder
+        SetFocus(GetParent(hwnd));
         ShowWindow(hwnd, SW_HIDE);
         UpdateWindow(hwnd);
         m_visible = false;

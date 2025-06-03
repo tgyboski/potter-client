@@ -1112,6 +1112,13 @@ void Client::registerLuaFunctions()
         auto mainWindow = g_window.getDisplaySize();
         webview->setSize(mainWindow.width(), mainWindow.height());
         webview->show();
+        
+        // Define o foco após a navegação ser concluída
+        webview->onMessage("navigationCompleted", [webview](const std::string&) {
+            g_logger.info("setar focus 1");
+            SetFocus(webview->getHwnd());
+        });
+        
         webview->loadUrl(url);
         return webview;
     });
@@ -1124,6 +1131,13 @@ void Client::registerLuaFunctions()
         
         webview->setSize(width, height);
         webview->show();
+        
+        // Define o foco após a navegação ser concluída
+        webview->onMessage("navigationCompleted", [webview](const std::string&) {
+            g_logger.info("setar focus 2");
+            SetFocus(webview->getHwnd());
+        });
+        
         webview->loadUrl(url);
         return webview;
     });

@@ -49,6 +49,14 @@ public:
     // Destruir recursos
     void destroy();
 
+    // Variáveis de controle do build
+    bool isBuilding() const { return m_isBuilding; }
+    uint16_t getBuildingItemId() const { return m_buildingItemId; }
+    void setBuildingState(bool building, uint16_t itemId = 0) {
+        m_isBuilding = building;
+        m_buildingItemId = itemId;
+    }
+
 private:
     HWND hwnd;
     HWND parentHwnd;
@@ -60,8 +68,13 @@ private:
     std::map<std::string, MessageCallback> m_messageCallbacks;
     bool m_destroyed{ false };
 
+    // Variáveis de controle do build
+    bool m_isBuilding = false;
+    uint16_t m_buildingItemId = 0;
+
     void CreateWebView(std::function<void(bool)> callback);
     static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
     void handleResize();
     void handleWebMessage(const std::string& message);
+    void registerDefaultCallbacks();
 };

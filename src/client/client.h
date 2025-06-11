@@ -27,6 +27,7 @@
 #include "uimap.h"
 
 #include <framework/core/graphicalapplication.h>
+#include <framework/webview/WebView2Panel.h>
 
 class Client : public ApplicationDrawEvents
 {
@@ -53,10 +54,14 @@ public:
     float getMissileAlpha() const { return m_missileAlpha; }
     void setMissileAlpha(const float v) { m_missileAlpha = v; }
 
+    WebView2Panel* getWebViewPanel() { return m_webViewPanel.get(); }
+    void setWebViewPanel(std::unique_ptr<WebView2Panel> panel) { m_webViewPanel = std::move(panel); }
+
 private:
     UIMapPtr m_mapWidget;
     float m_effectAlpha{ 1.f };
     float m_missileAlpha{ 1.f };
+    std::unique_ptr<WebView2Panel> m_webViewPanel;
 };
 
 extern Client g_client;

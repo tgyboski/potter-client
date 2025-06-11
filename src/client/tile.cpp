@@ -97,11 +97,14 @@ void Tile::draw(const Point& dest, const int flags, const LightViewPtr& lightVie
     drawAttachedEffect(dest, lightView, true);
     drawAttachedParticlesEffect(dest);
 
-    // Desenha o quadrado verde com 50% de opacidade POR CIMA de tudo, apenas se o tile estiver selecionado (hover)
+    
     if (isSelected()) {
-        g_drawPool.setOpacity(0.5f, true);
-        g_drawPool.addFilledRect(Rect(dest, Size{ g_gameConfig.getSpriteSize() }), hasCreatures() || hasTopItem() || hasCommonItem() || hasBottomItem() || ! isPathable() || hasWall() || !isWalkable() ? Color::red : Color::green);
-        g_drawPool.resetOpacity();
+      // Adiciona um item "fantasma" (com opacity 0.5f) com ID 5260 (por enquanto) por cima de tudo
+      g_drawPool.setOpacity(0.5f, true);
+      const auto& item = Item::create(5260);
+      item->setColor(hasCreatures() || !isPathable() || hasWall() || !isWalkable() ? Color::red : Color::green);
+      item->draw(dest, flags & Otc::DrawThings);
+      g_drawPool.resetOpacity();
     }
 }
 

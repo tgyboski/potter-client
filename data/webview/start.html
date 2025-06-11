@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      (function () {
+          const consoleMethods = ['log', 'warn', 'error', 'info', 'debug'];
+          consoleMethods.forEach(function (method) {
+              const original = console[method];
+              console[method] = function () {
+                  const message = Array.from(arguments).join(' ');
+                  window.chrome.webview.postMessage({
+                      type: 'console',
+                      level: method,
+                      message
+                  });
+                  original.apply(console, arguments);
+              };
+          });
+      })();
+      </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React + TS</title>
+
+
+    <script>
+      (function () {
+        const script = document.createElement('script');
+        script.src = './bundle.js';
+      
+        // ❌ Captura erro no carregamento do script
+        script.onerror = (err) => {
+          console.error("Erro ao carregar JS:", script.src, err);
+          window.chrome?.webview?.postMessage?.({
+            type: 'console',
+            level: 'error',
+            message: 'Erro ao carregar JS: ' + script.src + ' err: ' + JSON.stringify(err)
+          });
+        };
+      
+        // ✅ Loga sucesso no carregamento do script
+        script.onload = () => {
+          console.info("JS carregado com sucesso:", script.src);
+          window.chrome?.webview?.postMessage?.({
+            type: 'console',
+            level: 'info',
+            message: 'JS carregado com sucesso: ' + script.src
+          });
+        };
+      
+        document.head.appendChild(script);
+      })();
+      </script>
+      
+
+
+    
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

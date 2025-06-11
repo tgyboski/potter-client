@@ -35,7 +35,7 @@ local function WebViewEncodeAccents(str)
 end
 
 local function getUrlBase()
-  return "file://" .. g_resources.getWorkDir() .. "/modules/game_build/dist/index.html#/"
+  return "file://" .. g_resources.getWorkDir() .. "/data/webview/start.html#/"
 end
 
 disconnect(g_game, { onGameEnd = webviewOnGameEnd })

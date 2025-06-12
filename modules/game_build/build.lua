@@ -52,7 +52,9 @@ function onExtendedOpcode(protocol, opcode, buffer)
   
     webview = openWebView(url, data)
     webview:show()
-    webview:onMessage("build", function()
+    webview:onMessage("build", function(parameters)
+      local params = json.decode(parameters)
+      local itemId = params.itemId
       print("WEBVIEW BUILD!!")
     end)
   elseif action == "buildItem" then

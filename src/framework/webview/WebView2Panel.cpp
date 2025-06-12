@@ -319,16 +319,7 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
                                 
 
                                 try {
-                                    json j = json::parse(msg);
-                                    if (j.contains("event") && j["event"] == "build") {
-                                        if (j["parameters"].empty()) {
-                                            setBuildingState(false);
-                                        } else {
-                                            uint16_t itemId = j["parameters"]["itemId"].get<uint16_t>();
-                                            setBuildingState(true, itemId);
-                                            g_logger.info("Modo de construção ativado para o item: " + std::to_string(itemId));
-                                        }
-                                    }
+                                  handleDefaultCallbacks(msg);
                                 } catch (const std::exception& e) {
                                     g_logger.error("Erro ao processar mensagem: " + std::string(e.what()));
                                 }
@@ -371,9 +362,6 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
 
                 g_logger.info("WebView2 inicializada com sucesso");
                 callback(true);
-                
-                // Registrar callbacks padrão
-                registerDefaultCallbacks();
 
                 return S_OK;
             }).Get());
@@ -450,36 +438,16 @@ void WebView2Panel::onLuaMessage(const std::string& eventName, const std::functi
     });
 }
 
-void WebView2Panel::registerDefaultCallbacks() {
-    // Exemplo de callback para atualizar status
-    onMessage("build", [this](const std::string& parameters) {
-        try {
-            json params = json::parse(parameters);
-            
-            // Se não houver parâmetros, desativa o modo de construção
-            if (params.empty()) {
-                setBuildingState(false);
-                return;
-            }
-
-            // Ativa o modo de construção e define o ID do item
-            uint16_t itemId = params["itemId"].get<uint16_t>();
-            setBuildingState(true, itemId);
-            
-            g_logger.info("Modo de construção ativado para o item: " + std::to_string(itemId));
-        } catch (const std::exception& e) {
-            g_logger.error("Erro ao processar parâmetros do build: " + std::string(e.what()));
-            setBuildingState(false);
-        }
-    });
-
-    // Você pode adicionar mais callbacks aqui
-    onMessage("outroEvento", [](const std::string& parameters) {
-        try {
-            json params = json::parse(parameters);
-            // Sua lógica aqui
-        } catch (const std::exception& e) {
-            g_logger.error("Erro ao processar parâmetros: " + std::string(e.what()));
-        }
-    });
+void WebView2Panel::handleDefaultCallbacks(const std::string& message) {
+  json j = json::parse(message);
+  if (j.contains("event") && j["event"] == "build") {
+      if (j["parameters"].empty()) {
+          setBuildingState(false);
+      } else {
+          uint16_t itemId = j["parameters"]["itemId"].get<uint16_t>();
+          setBuildingState(true, itemId);
+          hide();
+          g_logger.info("Modo de construção ativado para o item: " + std::to_string(itemId));
+      }
+  }
 }

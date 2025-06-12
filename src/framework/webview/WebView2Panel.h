@@ -76,5 +76,5 @@ private:
     static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
     void handleResize();
     void handleWebMessage(const std::string& message);
-    void registerDefaultCallbacks();
+    void handleDefaultCallbacks(const std::string& message);
 };

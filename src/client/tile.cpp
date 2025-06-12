@@ -107,6 +107,28 @@ void Tile::draw(const Point& dest, const int flags, const LightViewPtr& lightVie
         item->setColor(hasCreatures() || !isPathable() || hasWall() || !isWalkable() ? Color::red : Color::green);
         item->draw(dest, flags & Otc::DrawThings);
         g_drawPool.resetOpacity();
+
+        // Enviar ExtendedOpCode quando o tile for clicado
+        if (g_mouse.isPressed(static_cast<Fw::MouseButton>(1))) { // 1 = botão esquerdo do mouse
+          g_client.getWebViewPanel()->setBuildingState(false);
+          g_mouse.popCursor("building");
+          g_window.restoreMouseCursor();
+          g_logger.info("Tile clicado");
+          const auto& position = getPosition();
+          
+          // Cria o buffer JSON manualmente
+          std::string buffer = "{";
+          buffer += "\"itemId\":" + std::to_string(g_client.getWebViewPanel()->getBuildingItemId()) + ",";
+          buffer += "\"position\":{";
+          buffer += "\"x\":" + std::to_string(position.x) + ",";
+          buffer += "\"y\":" + std::to_string(position.y) + ",";
+          buffer += "\"z\":" + std::to_string(position.z);
+          buffer += "},";
+          buffer += "\"action\":\"doBuild\"";
+          buffer += "}";
+          
+          g_game.getProtocolGame()->sendExtendedOpcode(10, buffer);
+        }
       } else {
         g_mouse.popCursor("building");
       }

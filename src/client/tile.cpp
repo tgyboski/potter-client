@@ -108,15 +108,12 @@ void Tile::draw(const Point& dest, const int flags, const LightViewPtr& lightVie
         item->draw(dest, flags & Otc::DrawThings);
         g_drawPool.resetOpacity();
 
-        // Enviar ExtendedOpCode quando o tile for clicado
-        if (g_mouse.isPressed(static_cast<Fw::MouseButton>(1))) { // 1 = botão esquerdo do mouse
+        if (g_mouse.isPressed(static_cast<Fw::MouseButton>(1))) { 
           g_client.getWebViewPanel()->setBuildingState(false);
-          g_mouse.popCursor("building");
           g_window.restoreMouseCursor();
           g_logger.info("Tile clicado");
           const auto& position = getPosition();
           
-          // Cria o buffer JSON manualmente
           std::string buffer = "{";
           buffer += "\"itemId\":" + std::to_string(g_client.getWebViewPanel()->getBuildingItemId()) + ",";
           buffer += "\"position\":{";
@@ -130,7 +127,7 @@ void Tile::draw(const Point& dest, const int flags, const LightViewPtr& lightVie
           g_game.getProtocolGame()->sendExtendedOpcode(10, buffer);
         }
       } else {
-        g_mouse.popCursor("building");
+        g_window.restoreMouseCursor();
       }
       
     }

@@ -11,3 +11,6 @@ Cursors
   text:
     image: textcursor
     hot-spot: 4 9
+  building:
+    image: buildingcursor
+    hot-spot: 9 9

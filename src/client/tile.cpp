@@ -25,6 +25,7 @@
 #include <framework/core/graphicalapplication.h>
 #include <framework/graphics/drawpoolmanager.h>
 #include <framework/ui/uiwidget.h>
+#include <framework/input/mouse.h>
 
 #include <ranges>
 
@@ -100,11 +101,14 @@ void Tile::draw(const Point& dest, const int flags, const LightViewPtr& lightVie
     if (isSelected()) {
       
       if (g_client.getWebViewPanel() && g_client.getWebViewPanel()->isBuilding()) {
+        g_mouse.pushCursor("building");
         g_drawPool.setOpacity(0.5f, true);
         const auto& item = Item::create(g_client.getWebViewPanel()->getBuildingItemId());
         item->setColor(hasCreatures() || !isPathable() || hasWall() || !isWalkable() ? Color::red : Color::green);
         item->draw(dest, flags & Otc::DrawThings);
         g_drawPool.resetOpacity();
+      } else {
+        g_mouse.popCursor("building");
       }
       
     }

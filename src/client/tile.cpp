@@ -100,16 +100,17 @@ void Tile::draw(const Point& dest, const int flags, const LightViewPtr& lightVie
 
     if (isSelected()) {
       
-      if (g_client.getWebViewPanel() && g_client.getWebViewPanel()->isBuilding()) {
+      if (g_client.getWebViewPanel() && g_client.getWebViewPanel()->isBuilding() && !g_client.getWebViewPanel()->isWaitingBuildResponse()) {
         g_mouse.pushCursor("building");
         g_drawPool.setOpacity(0.5f, true);
         const auto& item = Item::create(g_client.getWebViewPanel()->getBuildingItemId());
-        item->setColor(hasCreatures() || !isPathable() || hasWall() || !isWalkable() ? Color::red : Color::green);
+        bool canBuild = !hasCreatures() && isPathable() && !hasWall() && isWalkable();
+        item->setColor(canBuild ? Color::green : Color::red);
         item->draw(dest, flags & Otc::DrawThings);
         g_drawPool.resetOpacity();
 
-        if (g_mouse.isPressed(static_cast<Fw::MouseButton>(1))) { 
-          g_client.getWebViewPanel()->setBuildingState(false);
+        if (g_mouse.isPressed(static_cast<Fw::MouseButton>(1)) && canBuild) { 
+          g_client.getWebViewPanel()->setWaitingBuildResponse(true);
           g_window.restoreMouseCursor();
           g_logger.info("Tile clicado");
           const auto& position = getPosition();

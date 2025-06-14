@@ -63,6 +63,8 @@ function onExtendedOpcode(protocol, opcode, buffer)
       local itemId = params.itemId
       startBuilding(itemId)
     end)
+  elseif action == "itemBuilded" then
+    getWebview():setWaitingBuildResponse(false)
   end
 end
 

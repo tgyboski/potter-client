@@ -51,11 +51,13 @@ public:
 
     // Variáveis de controle do build
     bool isBuilding() { return m_isBuilding; }
+    bool isWaitingBuildResponse() { return m_isWaitingBuildResponse; }
     uint16_t getBuildingItemId() { return m_buildingItemId; }
     void setBuildingState(bool building, uint16_t itemId = 0) {
         m_isBuilding = building;
         m_buildingItemId = itemId;
     }
+    void setWaitingBuildResponse(bool waiting) { m_isWaitingBuildResponse = waiting; }
 
 private:
     HWND hwnd;
@@ -71,7 +73,7 @@ private:
     // Variáveis de controle do build
     bool m_isBuilding = false;
     uint16_t m_buildingItemId = 0;
-
+    bool m_isWaitingBuildResponse = false;
     void CreateWebView(std::function<void(bool)> callback);
     static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
     void handleResize();

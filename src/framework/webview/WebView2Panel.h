@@ -50,8 +50,8 @@ public:
     void destroy();
 
     // Variáveis de controle do build
-    bool isBuilding() const { return m_isBuilding; }
-    uint16_t getBuildingItemId() const { return m_buildingItemId; }
+    bool isBuilding() { return m_isBuilding; }
+    uint16_t getBuildingItemId() { return m_buildingItemId; }
     void setBuildingState(bool building, uint16_t itemId = 0) {
         m_isBuilding = building;
         m_buildingItemId = itemId;

@@ -64,6 +64,7 @@ local function walk(dir)
     if not player or g_game.isDead() or player:isDead() then
         return
     end
+    
 
     if player:isWalkLocked() then
         nextWalkDir = nil

@@ -214,16 +214,14 @@ LRESULT CALLBACK WebView2Panel::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, L
             return 0;
             
         case WM_PAINT:
-            {
-                PAINTSTRUCT ps;
-                HDC hdc = BeginPaint(hwnd, &ps);
-                RECT rect;
-                GetClientRect(hwnd, &rect);
-                HBRUSH hBrush = CreateSolidBrush(RGB(255, 255, 255));
-                FillRect(hdc, &rect, hBrush);
-                DeleteObject(hBrush);
-                EndPaint(hwnd, &ps);
-            }
+        {
+            PAINTSTRUCT ps;
+            HDC hdc = BeginPaint(hwnd, &ps);
+            RECT rect;
+            GetClientRect(hwnd, &rect);
+            FillRect(hdc, &rect, (HBRUSH)GetStockObject(NULL_BRUSH));
+            EndPaint(hwnd, &ps);
+        }
             return 0;
     }
 
@@ -303,6 +301,7 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
                 }
 
                 g_logger.info("WebView2 obtida com sucesso");
+
 
                 webview->add_WebMessageReceived(
                     Microsoft::WRL::Callback<ICoreWebView2WebMessageReceivedEventHandler>(
@@ -440,7 +439,7 @@ void WebView2Panel::onLuaMessage(const std::string& eventName, const std::functi
 
 void WebView2Panel::handleDefaultCallbacks(const std::string& message) {
   json j = json::parse(message);
-  if (j.contains("event") && j["event"] == "build") {
+  if (j.contains("event") && j["event"] == "buildItemSelected") {
       if (j["parameters"].empty()) {
           setBuildingState(false);
       } else {

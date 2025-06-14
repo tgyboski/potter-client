@@ -1007,6 +1007,11 @@ function processMouseAction(menuPosition, mouseButton, autoWalkPos, lookThing, u
     player:stopAutoWalk()
 
     if autoWalkPos and keyboardModifiers == KeyboardNoModifier and mouseButton == MouseLeftButton then
+      local isBuilding = modules.game_build.isBuilding()
+      print("isBuilding", isBuilding)
+      if isBuilding then
+        return false
+      end
         player:autoWalk(autoWalkPos)
         if g_game.isAttacking() and g_game.getChaseMode() == ChaseOpponent then
             g_game.setChaseMode(DontChase)

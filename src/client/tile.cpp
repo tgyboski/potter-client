@@ -124,6 +124,7 @@ void Tile::draw(const Point& dest, const int flags, const LightViewPtr& lightVie
           buffer += "\"action\":\"doBuild\"";
           buffer += "}";
           
+          g_logger.info("buffer: " + buffer);
           g_game.getProtocolGame()->sendExtendedOpcode(10, buffer);
         }
       } else {

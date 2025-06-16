@@ -162,6 +162,9 @@
     <ClCompile Include="..\src\framework\graphics\animatedtexture.cpp">
       <Filter>Source Files\framework\graphics</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\client\animatedresource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\framework\graphics\apngloader.cpp">
       <Filter>Source Files\framework\graphics</Filter>
     </ClCompile>
@@ -649,6 +652,9 @@
     </ClInclude>
     <ClInclude Include="..\src\framework\graphics\animatedtexture.h">
       <Filter>Header Files\framework\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\client\animatedresource.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\framework\graphics\apngloader.h">
       <Filter>Header Files\framework\graphics</Filter>

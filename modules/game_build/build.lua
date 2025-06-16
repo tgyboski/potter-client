@@ -89,10 +89,7 @@ function testResourceAnimation()
   
   local playerPos = player:getPosition()
   if not playerPos then return end
-
-  print("playerPos", playerPos.x + 1)
-  print("playerPos", playerPos.y)
-  print("playerPos", playerPos.z)
+  
   -- Pega a posição do SQM ao lado do jogador (direita)
   local fromPos = { x = playerPos.x - 1, y = playerPos.y + 1, z = playerPos.z }
   

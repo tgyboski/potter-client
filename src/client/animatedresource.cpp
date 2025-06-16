@@ -19,13 +19,11 @@ AnimatedResource::AnimatedResource(const Position& from, const Position& to, int
     m_texture = g_textures.getTexture("/images/resources/wood.png");
     if (!m_texture) {
         g_logger.error("Failed to load texture /images/resources/wood.png");
-    } else {
-        g_logger.info("Successfully loaded texture /images/resources/wood.png");
     }
     // Carrega um ThingType dummy apenas para evitar crash em getThingType
     m_thingType = g_things.getThingType(1, ThingCategoryEffect);
     if (!m_thingType) {
-        g_logger.error("Failed to load thing type 5901");
+        g_logger.error("Failed to load thing type wood");
     }
 }
 

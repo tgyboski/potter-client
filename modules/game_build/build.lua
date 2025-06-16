@@ -94,10 +94,10 @@ function testResourceAnimation()
   print("playerPos", playerPos.y)
   print("playerPos", playerPos.z)
   -- Pega a posição do SQM ao lado do jogador (direita)
-  local fromPos = { x = playerPos.x + 1, y = playerPos.y, z = playerPos.z }
+  local fromPos = { x = playerPos.x - 1, y = playerPos.y + 1, z = playerPos.z }
   
   -- Anima o item da posição ao lado até o jogador
-  animateResourceToPlayer(fromPos, playerPos, 5901)
+  animateResourceToPlayer(fromPos, playerPos, 5901, 1000)
 end
 
 function testResourceAnimationEvent()
@@ -109,4 +109,13 @@ function testResourceAnimationEvent()
   end, 2000) -- 1000ms = 1 segundo
 
   testResourceAnimation()
+  scheduleEvent(function()
+    testResourceAnimation()
+
+    scheduleEvent(function()
+      testResourceAnimation()
+      return true
+    end, 100)
+    return true
+  end, 100)
 end

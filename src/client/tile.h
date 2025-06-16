@@ -219,6 +219,7 @@ private:
     void updateThingStackPos();
     void drawTop(const Point& dest, int flags, bool forceDraw, uint8_t drawElevation);
     void drawCreature(const Point& dest, int flags, bool forceDraw, uint8_t drawElevation, const LightViewPtr& lightView = nullptr);
+    void removeFinishedAnimatedResources();
 
     void setThingFlag(const ThingPtr& thing);
 

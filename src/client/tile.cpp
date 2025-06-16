@@ -38,7 +38,7 @@
 #include "uimap.h"
 #include "localplayer.h"
 #include <algorithm>
-
+#include "AnimatedResource.h"
 Tile::Tile(const Position& position) : m_position(position) {}
 
 void updateElevation(const ThingPtr& thing, uint8_t& drawElevation) {
@@ -60,6 +60,7 @@ void drawThing(const ThingPtr& thing, const Point& dest, const int flags, uint8_
 
 void Tile::draw(const Point& dest, const int flags, const LightViewPtr& lightView)
 {
+    removeFinishedAnimatedResources();
     m_lastDrawDest = dest;
 
     uint8_t drawElevation = 0;
@@ -1045,4 +1046,16 @@ bool Tile::canShoot(int distance)
     if (distance > 0 && std::max<int>(std::abs(m_position.x - playerPos.x), std::abs(m_position.y - playerPos.y)) > distance)
         return false;
     return g_map.isSightClear(playerPos, m_position);
+}
+
+void Tile::removeFinishedAnimatedResources()
+{
+    for (auto it = m_things.begin(); it != m_things.end(); ) {
+        auto animRes = std::dynamic_pointer_cast<AnimatedResource>(*it);
+        if (animRes && animRes->isFinished()) {
+            it = m_things.erase(it);
+        } else {
+            ++it;
+        }
+    }
 }

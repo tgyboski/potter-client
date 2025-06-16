@@ -1166,8 +1166,8 @@ void Client::registerLuaFunctions()
     // Adicionar função destroy
     g_lua.bindClassMemberFunction<WebView2Panel>("destroy", &WebView2Panel::destroy);
 
-    g_lua.bindGlobalFunction("animateResourceToPlayer", [](const Position& positionFrom, const Position& positionTo, int itemId) {
-        auto animatedResource = std::make_shared<AnimatedResource>(positionFrom, positionTo);
-        g_map.addThing(animatedResource, positionFrom);
+    g_lua.bindGlobalFunction("animateResourceToPlayer", [](const Position& positionFrom, const Position& positionTo, int itemId, int durationMs) {
+        auto animatedResource = std::make_shared<AnimatedResource>(positionFrom, positionTo, durationMs);
+        g_map.addThing(animatedResource, positionFrom, -2);
     });
 }

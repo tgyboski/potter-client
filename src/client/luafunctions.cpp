@@ -1142,6 +1142,7 @@ void Client::registerLuaFunctions()
         return webview;
     });
     g_lua.bindClassMemberFunction<WebView2Panel>("isBuilding", &WebView2Panel::isBuilding);
+    g_lua.bindClassMemberFunction<WebView2Panel>("setBuildingState", &WebView2Panel::setBuildingState);
     g_lua.bindClassMemberFunction<WebView2Panel>("setWaitingBuildResponse", &WebView2Panel::setWaitingBuildResponse);
     g_lua.bindClassMemberFunction<WebView2Panel>("setPosition", &WebView2Panel::setPosition);
     g_lua.bindClassMemberFunction<WebView2Panel>("setSize", &WebView2Panel::setSize);

@@ -1,9 +1,5 @@
 local OPCODE_CODE_BUILDING_ITEMS = 10
 Webview = {
-  Build = {
-    currentItem = nil,
-    allowedPosition = false
-  },
   webview = nil
 }
 
@@ -58,12 +54,14 @@ function onExtendedOpcode(protocol, opcode, buffer)
   
     Webview.webview = openWebView(url, data)
     Webview.webview:show()
-    Webview.webview:onMessage("buildItemSelected", function(parameters)
-      local params = json.decode(parameters)
-      local itemId = params.itemId
-      startBuilding(itemId)
-    end)
+    getWebview():setWaitingBuildResponse(false)
   elseif action == "itemBuilded" then
+    print("itemBuilded", data)
+    if data.shift ~= true then
+      getWebview():setBuildingState(false, data.itemId)
+    else
+      getWebview():setBuildingState(true, data.itemId)
+    end
     getWebview():setWaitingBuildResponse(false)
   end
 end
@@ -76,50 +74,7 @@ function open()
   Webview.webview:show()
 end
 
-function buildCurrentItem()
-  local item = Webview.Build.currentItem
-  if not item then return end
-  
-  Webview.Build.currentItem = nil
-  g_game.build(item)
-end
-
-function startBuilding(item)
-  print("startBuilding", item)
-  Webview.Build.currentItem = item
-  Webview.Build.allowedPosition = true -- Por enquanto sempre permitido
-end
-
-function stopBuilding()
-  Webview.Build.currentItem = nil
-  Webview.Build.allowedPosition = false
-  
-  -- Remove o hover do mapa
-  local gameMap = modules.game_interface.getMapPanel()
-  if gameMap then
-    gameMap:setHoverColor(nil)
-  end
-  
-  g_game.getProtocolGame():sendExtendedOpcode(10, json.encode({ 
-    action = "updateBuildState", 
-    data = Webview.Build 
-  }))
-end
-
 function isBuilding()
   if not getWebview() then return false end
   return getWebview():isBuilding()
 end
-
--- Função para atualizar o estado do hover baseado na posição do mouse
-function updateBuildHover(position)
-  if not isBuilding() then return end
-  
-  -- Por enquanto sempre permitido, mas aqui você pode adicionar suas regras
-  Webview.Build.allowedPosition = true
-  
-  local gameMap = modules.game_interface.getMapPanel()
-  if gameMap then
-    gameMap:setHoverColor(Webview.Build.allowedPosition and "#00FF00" or "#FF0000")
-  end
-end 

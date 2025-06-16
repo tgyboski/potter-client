@@ -17,8 +17,6 @@ using json = nlohmann::json;
 static WebView2Panel* g_currentInstance = nullptr;
 
 WebView2Panel::WebView2Panel(HWND parentHwnd) : UIWidget(), hwnd(nullptr), parentHwnd(parentHwnd) {
-    g_logger.info("Iniciando construtor do WebView2Panel");
-    
     // Criar uma janela filha para a WebView
     WNDCLASSEXA wc = {0};
     wc.cbSize = sizeof(WNDCLASSEXA);
@@ -52,12 +50,9 @@ WebView2Panel::WebView2Panel(HWND parentHwnd) : UIWidget(), hwnd(nullptr), paren
         return;
     }
 
-    g_logger.info("Janela da WebView criada com sucesso");
-
     // Inicializar WebView de forma assíncrona
     InitializeWebView([this](bool success) {
         if (success) {
-            g_logger.info("WebView2 inicializada com sucesso");
             if (m_onInitialized) {
                 m_onInitialized();
             }
@@ -71,8 +66,6 @@ void WebView2Panel::destroy() {
     if (m_destroyed) {
         return;
     }
-
-    g_logger.info("Destruindo WebView2Panel");
 
     // Limpar callbacks
     m_messageCallbacks.clear();
@@ -145,15 +138,11 @@ std::string GetErrorMessage(HRESULT hr) {
 }
 
 void WebView2Panel::loadUrl(const std::string& url) {
-    g_logger.info("Tentando carregar URL: " + url);
     if (webview) {
-        g_logger.info("Postando mensagem para thread principal");
         BOOL result = PostMessage(hwnd, WM_APP + 1, 0, (LPARAM)new std::string(url));
         if (!result) {
             DWORD error = GetLastError();
             g_logger.error("Falha ao postar mensagem: " + std::to_string(error));
-        } else {
-            g_logger.info("Mensagem postada com sucesso");
         }
     } else {
         g_logger.error("WebView não inicializada");
@@ -175,7 +164,6 @@ LRESULT CALLBACK WebView2Panel::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, L
         CREATESTRUCT* cs = reinterpret_cast<CREATESTRUCT*>(lParam);
         panel = reinterpret_cast<WebView2Panel*>(cs->lpCreateParams);
         SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(panel));
-        g_logger.info("WM_CREATE: Panel armazenado");
     } else {
         panel = reinterpret_cast<WebView2Panel*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
     }
@@ -190,19 +178,14 @@ LRESULT CALLBACK WebView2Panel::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, L
             panel->handleResize();
             break;
             
-        case WM_APP + 1: // Mensagem personalizada para navegação
-            g_logger.info("Mensagem de navegação recebida");
+        case WM_APP + 1:
             if (panel->webview) {
-                g_logger.info("WebView disponível");
                 std::string* url = reinterpret_cast<std::string*>(lParam);
                 if (url) {
-                    g_logger.info("URL recebida: " + *url);
                     std::wstring wideUrl(url->begin(), url->end());
                     HRESULT hr = panel->webview->Navigate(wideUrl.c_str());
                     if (FAILED(hr)) {
                         g_logger.error("Falha ao navegar para URL: " + GetErrorMessage(hr) + " (HRESULT: " + std::to_string(hr) + ")");
-                    } else {
-                        g_logger.info("Navegação iniciada com sucesso");
                     }
                     delete url;
                 } else {
@@ -229,8 +212,6 @@ LRESULT CALLBACK WebView2Panel::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, L
 }
 
 void WebView2Panel::InitializeWebView(std::function<void(bool)> callback) {
-    g_logger.info("Iniciando criação do ambiente WebView2");
-    
     // Verificar se o WebView2 Runtime está instalado
     wchar_t* versionInfo = nullptr;
     HRESULT hr = GetAvailableCoreWebView2BrowserVersionString(nullptr, &versionInfo);
@@ -241,7 +222,6 @@ void WebView2Panel::InitializeWebView(std::function<void(bool)> callback) {
     }
     std::wstring versionStr(versionInfo);
     std::string versionStrA(versionStr.begin(), versionStr.end());
-    g_logger.info("WebView2 Runtime encontrado: " + versionStrA);
     CoTaskMemFree(versionInfo);
     
     // Criar o ambiente WebView2
@@ -255,7 +235,6 @@ void WebView2Panel::InitializeWebView(std::function<void(bool)> callback) {
                     return result;
                 }
 
-                g_logger.info("Ambiente WebView2 criado com sucesso");
                 environment = env;
                 CreateWebView(callback);
                 return S_OK;
@@ -274,7 +253,6 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
         return;
     }
 
-    g_logger.info("Criando controlador WebView2");
     HRESULT hr = environment->CreateCoreWebView2Controller(
         hwnd,
         Callback<ICoreWebView2CreateCoreWebView2ControllerCompletedHandler>(
@@ -285,7 +263,6 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
                     return result;
                 }
 
-                g_logger.info("Controlador WebView2 criado com sucesso");
                 controller = ctrl;
                 if (!controller) {
                     g_logger.error("Controlador WebView2 é nulo");
@@ -299,9 +276,6 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
                     callback(false);
                     return E_FAIL;
                 }
-
-                g_logger.info("WebView2 obtida com sucesso");
-
 
                 webview->add_WebMessageReceived(
                     Microsoft::WRL::Callback<ICoreWebView2WebMessageReceivedEventHandler>(
@@ -336,7 +310,6 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
                 webview->add_NavigationStarting(
                     Callback<ICoreWebView2NavigationStartingEventHandler>(
                         [](ICoreWebView2* sender, ICoreWebView2NavigationStartingEventArgs* args) -> HRESULT {
-                            g_logger.info("Navegação iniciada");
                             return S_OK;
                         }).Get(),
                     &token);
@@ -347,7 +320,6 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
                             BOOL success;
                             args->get_IsSuccess(&success);
                             if (success) {
-                                g_logger.info("Navegação concluída com sucesso");
                                 // Dispara o evento navigationCompleted
                                 if (m_messageCallbacks.find("navigationCompleted") != m_messageCallbacks.end()) {
                                     m_messageCallbacks["navigationCompleted"]("");
@@ -359,7 +331,6 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
                         }).Get(),
                     &token);
 
-                g_logger.info("WebView2 inicializada com sucesso");
                 callback(true);
 
                 return S_OK;
@@ -424,11 +395,8 @@ void WebView2Panel::handleWebMessage(const std::string& message) {
 }
 
 void WebView2Panel::onLuaMessage(const std::string& eventName, const std::function<void(const std::string&)>& callback) {
-    g_logger.info("onLuaMessage");
-    
     // Criar uma função Lua que será chamada quando a mensagem for recebida
     onMessage(eventName, [callback](const std::string& parameters) {
-        g_logger.info("onLuaMessage callback");
         try {
             callback(parameters);
         } catch (const std::exception& e) {
@@ -446,7 +414,6 @@ void WebView2Panel::handleDefaultCallbacks(const std::string& message) {
           uint16_t itemId = j["parameters"]["itemId"].get<uint16_t>();
           setBuildingState(true, itemId);
           hide();
-          g_logger.info("Modo de construção ativado para o item: " + std::to_string(itemId));
       }
   }
 }

@@ -100,11 +100,15 @@ void Tile::draw(const Point& dest, const int flags, const LightViewPtr& lightVie
 
     if (isSelected()) {
       
-      if (g_client.getWebViewPanel() && g_client.getWebViewPanel()->isBuilding() && !g_client.getWebViewPanel()->isWaitingBuildResponse()) {
+      uint16_t itemId = g_client.getWebViewPanel()->getBuildingItemId();
+      bool showBuildingItem = g_client.getWebViewPanel() && g_client.getWebViewPanel()->isBuilding() && !g_client.getWebViewPanel()->isWaitingBuildResponse() && itemId != 0;
+
+      if (showBuildingItem) {
+        const auto& item = Item::create(itemId);
+        bool canBuild = !hasCreatures() && isPathable() && !hasWall() && isWalkable();
+
         g_mouse.pushCursor("building");
         g_drawPool.setOpacity(0.5f, true);
-        const auto& item = Item::create(g_client.getWebViewPanel()->getBuildingItemId());
-        bool canBuild = !hasCreatures() && isPathable() && !hasWall() && isWalkable();
         item->setColor(canBuild ? Color::green : Color::red);
         item->draw(dest, flags & Otc::DrawThings);
         g_drawPool.resetOpacity();
@@ -112,20 +116,23 @@ void Tile::draw(const Point& dest, const int flags, const LightViewPtr& lightVie
         if (g_mouse.isPressed(static_cast<Fw::MouseButton>(1)) && canBuild) { 
           g_client.getWebViewPanel()->setWaitingBuildResponse(true);
           g_window.restoreMouseCursor();
-          g_logger.info("Tile clicado");
           const auto& position = getPosition();
           
           std::string buffer = "{";
-          buffer += "\"itemId\":" + std::to_string(g_client.getWebViewPanel()->getBuildingItemId()) + ",";
+          buffer += "\"itemId\":" + std::to_string(itemId) + ",";
           buffer += "\"position\":{";
           buffer += "\"x\":" + std::to_string(position.x) + ",";
           buffer += "\"y\":" + std::to_string(position.y) + ",";
           buffer += "\"z\":" + std::to_string(position.z);
           buffer += "},";
           buffer += "\"action\":\"doBuild\"";
+          
+          if (g_window.getKeyboardModifiers() & Fw::KeyboardShiftModifier) {
+            buffer += ",\"shift\":true";
+          }
+
           buffer += "}";
           
-          g_logger.info("buffer: " + buffer);
           g_game.getProtocolGame()->sendExtendedOpcode(10, buffer);
         }
       } else {

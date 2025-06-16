@@ -1156,4 +1156,67 @@ void Client::registerLuaFunctions()
     
     // Adicionar função destroy
     g_lua.bindClassMemberFunction<WebView2Panel>("destroy", &WebView2Panel::destroy);
+
+    // Classe para gerenciar a animação do quadrado
+    class AnimatedSquare;
+    using AnimatedSquarePtr = std::shared_ptr<AnimatedSquare>;
+
+    class AnimatedSquare : public Thing {
+    public:
+        AnimatedSquare(const Position& from, const Position& to) 
+            : m_from(from), m_to(to) {
+            m_timer.restart();
+            scheduleNextUpdate();
+            
+            // Usar um efeito existente como base
+            m_thingType = g_things.getThingType(33, ThingCategoryEffect);
+        }
+
+        void draw(const Point& dest, bool drawThings = true, const LightViewPtr& lightView = nullptr) override {
+            float progress = m_timer.ticksElapsed() / static_cast<float>(m_duration);
+            if (progress >= 1.0f) {
+                g_map.removeThing(std::static_pointer_cast<Thing>(asLuaObject()));
+                return;
+            }
+            
+            // Calcula a posição atual
+            float x = dest.x + (m_to.x - m_from.x) * g_gameConfig.getSpriteSize() * progress;
+            float y = dest.y + (m_to.y - m_from.y) * g_gameConfig.getSpriteSize() * progress;
+            
+            // Desenha o quadrado verde
+            g_drawPool.addFilledRect(Rect(Point(x - 2, y - 2), Size(5, 5)), Color::green);
+        }
+
+        void drawLight(const Point& dest, const LightViewPtr& lightView) override {}
+
+        bool isEffect() override { return true; }
+        bool isItem() override { return false; }
+        bool isCreature() override { return false; }
+        bool isMissile() override { return false; }
+
+        ThingType* getThingType() const override { return m_thingType.get(); }
+
+        AnimatedSquarePtr asAnimatedSquare() { return std::static_pointer_cast<AnimatedSquare>(shared_from_this()); }
+
+    private:
+        void scheduleNextUpdate() {
+            if (m_timer.ticksElapsed() < m_duration) {
+                g_dispatcher.addEvent([this]() {
+                    scheduleNextUpdate();
+                });
+            }
+        }
+
+        Position m_from;
+        Position m_to;
+        Timer m_timer;
+        const int m_duration = 500; // 500ms de duração
+        ThingTypePtr m_thingType;
+    };
+
+    // Função para animar um quadrado se movendo do SQM de origem até o destino
+    g_lua.bindGlobalFunction("animateResourceToPlayer", [](const Position& positionFrom, const Position& positionTo, int itemId) {
+        auto animatedSquare = std::make_shared<AnimatedSquare>(positionFrom, positionTo);
+        g_map.addThing(animatedSquare, positionFrom);
+    });
 }

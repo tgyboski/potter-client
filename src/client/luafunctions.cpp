@@ -71,6 +71,9 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+#include <framework/core/logger.h>
+#include <framework/stdext/string.h>
+
 void Client::registerLuaFunctions()
 {
     g_lua.registerSingletonClass("g_things");
@@ -1173,8 +1176,23 @@ void Client::registerLuaFunctions()
             m_timer.restart();
             scheduleNextUpdate();
             
-            // Usar um efeito existente como base
-            m_thingType = g_things.getThingType(33, ThingCategoryEffect);
+            // Usar um item existente como base (5901 = wood)
+            m_thingType = g_things.getThingType(5901, ThingCategoryItem);
+            
+            // Verifica se o ThingType foi carregado corretamente
+            if (!m_thingType) {
+                g_logger.error("Failed to load thing type 5901");
+            } else {
+                // Carrega a textura explicitamente
+                m_thingType->getTexture(0);
+                
+                if (!m_thingType->hasTexture()) {
+                    g_logger.error("Thing type 5901 has no texture");
+                } else {
+                    g_logger.info("Successfully loaded thing type 5901");
+                    g_logger.info(stdext::format("Thing type size: %dx%d", m_thingType->getWidth(), m_thingType->getHeight()));
+                }
+            }
         }
 
         void draw(const Point& dest, bool drawThings = true, const LightViewPtr& lightView = nullptr) override {
@@ -1193,8 +1211,21 @@ void Client::registerLuaFunctions()
             float y = dest.y + (m_to.y - m_from.y) * g_gameConfig.getSpriteSize() * progress;
             y -= std::sin(progress * M_PI) * arcHeight; // Subtrai para que o arco vá para cima
             
-            // Desenha o quadrado verde
-            g_drawPool.addFilledRect(Rect(Point(x - 2, y - 2), Size(5, 5)), Color::green);
+            // Tenta desenhar a sprite do item
+            if (m_thingType && m_thingType->hasTexture()) {
+                // Escala a sprite para metade do tamanho
+                float scale = 0.5f;
+                Size spriteSize = m_thingType->getSize() * scale;
+                
+                // Centraliza a sprite na posição
+                Point spritePos(x - spriteSize.width() / 2, y - spriteSize.height() / 2);
+                
+                // Desenha a sprite com alpha total
+                m_thingType->draw(spritePos, 0, 0, 0, 0, 0, Color::white, drawThings, lightView);
+            } else {
+                // Fallback: desenha um quadrado verde
+                // g_drawPool.addFilledRect(Rect(Point(x - 2, y - 2), Size(5, 5)), Color::green);
+            }
         }
 
         void drawLight(const Point& dest, const LightViewPtr& lightView) override {}

@@ -3,6 +3,9 @@
 #include "thing.h"
 #include <framework/core/timer.h>
 #include <string>
+#include <framework/graphics/texture.h>
+#include <framework/graphics/texturemanager.h>
+#include <framework/core/resourcemanager.h>
 
 #include <cmath>
 #ifndef M_PI
@@ -19,22 +22,17 @@ public:
         m_timer.restart();
         scheduleNextUpdate();
         
-        // Usar um item existente como base (5901 = wood)
+        // Carrega a textura mockada wood.png diretamente da pasta images/resources
+        m_texture = g_textures.getTexture("/images/resources/wood.png");
+        if (!m_texture) {
+            g_logger.error("Failed to load texture images/resources/wood.png");
+        } else {
+            g_logger.info("Successfully loaded texture images/resources/wood.png");
+        }
+        // Carrega um ThingType dummy apenas para evitar crash em getThingType
         m_thingType = g_things.getThingType(5901, ThingCategoryItem);
-        
-        // Verifica se o ThingType foi carregado corretamente
         if (!m_thingType) {
             g_logger.error("Failed to load thing type 5901");
-        } else {
-            // Carrega a textura explicitamente
-            m_thingType->getTexture(0);
-            
-            if (!m_thingType->hasTexture()) {
-                g_logger.error("Thing type 5901 has no texture");
-            } else {
-                g_logger.info("Successfully loaded thing type 5901");
-                g_logger.info(stdext::format("Thing type size: %dx%d", m_thingType->getWidth(), m_thingType->getHeight()));
-            }
         }
     }
 
@@ -47,30 +45,17 @@ public:
         
         // Calcula a posição atual
         float x = dest.x + (m_to.x - m_from.x) * g_gameConfig.getSpriteSize() * progress;
-        
-        // Usa uma função seno para criar um arco
-        // O seno vai de -1 a 1, então multiplicamos por metade da altura do arco
         float arcHeight = g_gameConfig.getSpriteSize() * 0.5f; // Altura do arco
         float y = dest.y + (m_to.y - m_from.y) * g_gameConfig.getSpriteSize() * progress;
-        y -= std::sin(progress * M_PI) * arcHeight; // Subtrai para que o arco vá para cima
+        y -= std::sin(progress * M_PI) * arcHeight;
         
-        // Tenta desenhar a sprite do item
-        if (m_thingType && m_thingType->hasTexture()) {
-            // Escala a sprite para metade do tamanho
-            float scale = 0.5f;
-            Size spriteSize = m_thingType->getSize() * scale;
-            
-            // Centraliza a sprite na posição
-            Point spritePos(x - spriteSize.width() / 2, y - spriteSize.height() / 2);
-            
-            // Aplica a escala usando g_drawPool
-            g_drawPool.scale(scale);
-            
-            // Desenha a sprite com alpha total
-            m_thingType->draw(spritePos, 0, 0, 0, 0, 0, Color::white, drawThings, lightView);
-            
-            // Reseta a escala para 1.0
-            g_drawPool.scale(1.0f);
+        if (m_texture) {
+            // Centraliza a imagem na posição
+            Point pos(x, y);
+            Size size = m_texture->getSize();
+            Rect destRect(pos, size);
+            Rect srcRect(Point(0, 0), size);
+            g_drawPool.addTexturedRect(destRect, m_texture, srcRect, Color::white);
         } else {
             // Fallback: desenha um quadrado verde
             // g_drawPool.addFilledRect(Rect(Point(x - 2, y - 2), Size(5, 5)), Color::green);
@@ -101,5 +86,6 @@ private:
     Position m_to;
     Timer m_timer;
     const int m_duration = 500; // 500ms de duração
+    TexturePtr m_texture;
     ThingTypePtr m_thingType;
 }; 

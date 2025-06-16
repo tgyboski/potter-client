@@ -1220,8 +1220,14 @@ void Client::registerLuaFunctions()
                 // Centraliza a sprite na posição
                 Point spritePos(x - spriteSize.width() / 2, y - spriteSize.height() / 2);
                 
+                // Aplica a escala usando g_drawPool
+                g_drawPool.scale(scale);
+                
                 // Desenha a sprite com alpha total
                 m_thingType->draw(spritePos, 0, 0, 0, 0, 0, Color::white, drawThings, lightView);
+                
+                // Reseta a escala para 1.0
+                g_drawPool.scale(1.0f);
             } else {
                 // Fallback: desenha um quadrado verde
                 // g_drawPool.addFilledRect(Rect(Point(x - 2, y - 2), Size(5, 5)), Color::green);

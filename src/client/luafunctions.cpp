@@ -66,6 +66,11 @@
 
 #include <framework/luaengine/luainterface.h>
 
+#include <cmath>
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 void Client::registerLuaFunctions()
 {
     g_lua.registerSingletonClass("g_things");
@@ -1181,7 +1186,12 @@ void Client::registerLuaFunctions()
             
             // Calcula a posição atual
             float x = dest.x + (m_to.x - m_from.x) * g_gameConfig.getSpriteSize() * progress;
+            
+            // Usa uma função seno para criar um arco
+            // O seno vai de -1 a 1, então multiplicamos por metade da altura do arco
+            float arcHeight = g_gameConfig.getSpriteSize() * 0.5f; // Altura do arco
             float y = dest.y + (m_to.y - m_from.y) * g_gameConfig.getSpriteSize() * progress;
+            y -= std::sin(progress * M_PI) * arcHeight; // Subtrai para que o arco vá para cima
             
             // Desenha o quadrado verde
             g_drawPool.addFilledRect(Rect(Point(x - 2, y - 2), Size(5, 5)), Color::green);

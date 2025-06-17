@@ -33,4 +33,10 @@ public:
 
     PlayerPtr asPlayer() { return static_self_cast<Player>(); }
     bool isPlayer() override { return true; }
+
+    void setCollectingItem(const ItemPtr& item) { m_collectingItem = item; }
+    ItemPtr getCollectingItem() const { return m_collectingItem; }
+
+private:
+    ItemPtr m_collectingItem{ nullptr };
 };

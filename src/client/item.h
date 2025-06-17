@@ -118,6 +118,9 @@ public:
     bool isBeingCollected() const;
     void collect();
 
+    void setCollectingPlayer(const LocalPlayerPtr& player) { m_collectingPlayer = player; }
+    LocalPlayerPtr getCollectingPlayer() const { return m_collectingPlayer; }
+
 #ifdef FRAMEWORK_EDITOR
     std::string getName();
     static ItemPtr createFromOtb(int id);
@@ -179,6 +182,7 @@ private:
     std::string m_tooltip;
 
     bool m_beingCollected{ false };
+    LocalPlayerPtr m_collectingPlayer{ nullptr };
 
 #ifdef FRAMEWORK_EDITOR
     uint16_t m_serverId{ 0 };

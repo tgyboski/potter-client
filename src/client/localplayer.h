@@ -60,6 +60,7 @@ public:
     void setBlessings(uint16_t blessings);
     void setResourceBalance(Otc::ResourceTypes_t type, uint64_t value);
     void takeScreenshot(uint8_t type);
+    void setCollectingItem(const ItemPtr& item) { m_collectingItem = item; }
 
     uint32_t getFreeCapacity() { return m_freeCapacity; }
     uint32_t getTotalCapacity() { return m_totalCapacity; }
@@ -123,6 +124,8 @@ public:
     Position getPosition() override { return isPreWalking() ? m_preWalks.back() : m_position; }
     void resetPreWalk() { m_preWalks.clear(); }
 
+    ItemPtr getCollectingItem() const { return m_collectingItem; }
+
 private:
     struct Skill
     {
@@ -185,6 +188,8 @@ private:
     uint16_t m_stamina{ 0 };
     uint16_t m_regenerationTime{ 0 };
     uint16_t m_offlineTrainingTime{ 0 };
+
+    ItemPtr m_collectingItem{ nullptr };
 
     friend class Game;
 };

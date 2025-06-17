@@ -27,6 +27,7 @@
 #include "thing.h"
 #include "thingtypemanager.h"
 #include "tile.h"
+#include "localplayer.h"
 
 #include <framework/core/clock.h>
 #include <framework/core/filestream.h>
@@ -464,7 +465,22 @@ void Item::setBeingCollected(bool beingCollected) {
 bool Item::isBeingCollected() const { return m_beingCollected; }
 
 void Item::collect() {
-    setBeingCollected(!isBeingCollected());
+    bool wasBeingCollected = isBeingCollected();
+    setBeingCollected(!wasBeingCollected);
+    
+    if (!wasBeingCollected) {
+        // Item começou a ser coletado
+        if (auto player = g_game.getLocalPlayer()) {
+            setCollectingPlayer(player);
+            player->setCollectingItem(asItem());
+        }
+    } else {
+        // Item parou de ser coletado
+        if (auto player = getCollectingPlayer()) {
+            player->setCollectingItem(nullptr);
+            setCollectingPlayer(nullptr);
+        }
+    }
 }
 
 /* vim: set ts=4 sw=4 et :*/

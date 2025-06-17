@@ -57,6 +57,11 @@ void Item::draw(const Point& dest, const bool drawThings, const LightViewPtr& li
         internalDraw(animationPhase, dest, getMarkedColor(), drawThings, true);
     else if (isHighlighted())
         internalDraw(animationPhase, dest, getHighlightColor(), drawThings, true);
+
+    if (isBeingCollected()) {
+        g_logger.info("Item está sendo coletado");
+        g_drawPool.addBoundingRect(Rect(dest, Size(g_gameConfig.getSpriteSize() * g_drawPool.getScaleFactor())), Color::orange, std::max<int>(static_cast<int>(2 * g_drawPool.getScaleFactor()), 1));
+    }
 }
 
 void Item::internalDraw(const int animationPhase, const Point& dest, const Color& color, const bool drawThings, const bool replaceColorShader, const LightViewPtr& lightView)
@@ -463,6 +468,7 @@ void Item::setBeingCollected(bool beingCollected) {
 bool Item::isBeingCollected() const { return m_beingCollected; }
 
 void Item::collect() {
+    setBeingCollected(!isBeingCollected());
     g_logger.info("Item está sendo coletado");
 }
 

@@ -59,7 +59,6 @@ void Item::draw(const Point& dest, const bool drawThings, const LightViewPtr& li
         internalDraw(animationPhase, dest, getHighlightColor(), drawThings, true);
 
     if (isBeingCollected()) {
-        g_logger.info("Item está sendo coletado");
         g_drawPool.addBoundingRect(Rect(dest, Size(g_gameConfig.getSpriteSize() * g_drawPool.getScaleFactor())), Color::orange, std::max<int>(static_cast<int>(2 * g_drawPool.getScaleFactor()), 1));
     }
 }
@@ -460,16 +459,12 @@ void Item::serializeItem(const OutputBinaryTreePtr& out)
 
 void Item::setBeingCollected(bool beingCollected) { 
     m_beingCollected = beingCollected;
-    if (beingCollected) {
-        g_logger.info("Item está sendo coletado");
-    }
 }
 
 bool Item::isBeingCollected() const { return m_beingCollected; }
 
 void Item::collect() {
     setBeingCollected(!isBeingCollected());
-    g_logger.info("Item está sendo coletado");
 }
 
 /* vim: set ts=4 sw=4 et :*/

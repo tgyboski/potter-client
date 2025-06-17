@@ -116,6 +116,7 @@ public:
 
     void setBeingCollected(bool beingCollected);
     bool isBeingCollected() const;
+    void collect();
 
 #ifdef FRAMEWORK_EDITOR
     std::string getName();

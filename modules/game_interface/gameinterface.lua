@@ -635,6 +635,12 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
                 g_game.sendQuickLoot(1, useThing)
             end)
         end
+
+        if not useThing:isContainer() then
+            menu:addOption(tr('Collect'), function()
+                g_game.collect(useThing)
+            end)
+        end
     end
 
     if lookThing and not lookThing:isCreature() and not lookThing:isNotMoveable() and lookThing:isPickupable() then

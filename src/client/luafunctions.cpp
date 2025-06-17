@@ -261,6 +261,7 @@ void Client::registerLuaFunctions()
     g_lua.bindSingletonFunction("g_game", "close", &Game::close, &g_game);
     g_lua.bindSingletonFunction("g_game", "refreshContainer", &Game::refreshContainer, &g_game);
     g_lua.bindSingletonFunction("g_game", "attack", &Game::attack, &g_game);
+    g_lua.bindSingletonFunction("g_game", "collect", static_cast<void (Game::*)(ItemPtr)>(&Game::collect), &g_game);
     g_lua.bindSingletonFunction("g_game", "cancelAttack", &Game::cancelAttack, &g_game);
     g_lua.bindSingletonFunction("g_game", "follow", &Game::follow, &g_game);
     g_lua.bindSingletonFunction("g_game", "cancelFollow", &Game::cancelFollow, &g_game);

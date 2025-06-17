@@ -967,6 +967,14 @@ void Game::attack(CreaturePtr creature)
     m_protocolGame->sendAttack(creature ? creature->getId() : 0, m_seq);
 }
 
+void Game::collect(ItemPtr item)
+{
+    if (!canPerformGameAction())
+        return;
+
+    item->collect();
+}
+
 void Game::follow(CreaturePtr creature)
 {
     if (!canPerformGameAction() || creature == m_localPlayer)
@@ -1000,7 +1008,7 @@ void Game::cancelAttackAndFollow()
         setFollowingCreature(nullptr);
 
     if (isAttacking())
-        setAttackingCreature(nullptr);
+        cancelAttack();
 
     m_localPlayer->stopAutoWalk();
 

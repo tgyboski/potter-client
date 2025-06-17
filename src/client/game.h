@@ -620,6 +620,9 @@ public:
     void follow(CreaturePtr creature);
     void cancelFollow() { follow(nullptr); }
     void cancelAttackAndFollow();
+    
+    void collect(ItemPtr item);
+    void cancelCollect() { collect(ItemPtr(nullptr)); }
 
     // talk related
     void talk(std::string_view message);

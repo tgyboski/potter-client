@@ -466,11 +466,17 @@ bool Item::isBeingCollected() const { return m_beingCollected; }
 
 void Item::collect() {
     bool wasBeingCollected = isBeingCollected();
-    setBeingCollected(!wasBeingCollected);
     
     if (!wasBeingCollected) {
-        // Item começou a ser coletado
+        // Verifica se o jogador já está coletando algum item
         if (auto player = g_game.getLocalPlayer()) {
+            if (player->getCollectingItem()) {
+                // Se já estiver coletando, cancela a coleta anterior
+                player->getCollectingItem()->collect();
+            }
+            
+            // Inicia a coleta do novo item
+            setBeingCollected(true);
             setCollectingPlayer(player);
             player->setCollectingItem(asItem());
         }
@@ -479,6 +485,7 @@ void Item::collect() {
         if (auto player = getCollectingPlayer()) {
             player->setCollectingItem(nullptr);
             setCollectingPlayer(nullptr);
+            setBeingCollected(false);
         }
     }
 }

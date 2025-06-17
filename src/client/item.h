@@ -114,6 +114,9 @@ public:
 
     void onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) override { updatePatterns(); }
 
+    void setBeingCollected(bool beingCollected);
+    bool isBeingCollected() const;
+
 #ifdef FRAMEWORK_EDITOR
     std::string getName();
     static ItemPtr createFromOtb(int id);
@@ -173,6 +176,8 @@ private:
 
     bool m_async{ true };
     std::string m_tooltip;
+
+    bool m_beingCollected{ false };
 
 #ifdef FRAMEWORK_EDITOR
     uint16_t m_serverId{ 0 };

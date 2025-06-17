@@ -453,4 +453,7 @@ void Item::serializeItem(const OutputBinaryTreePtr& out)
 
 #endif
 
+void Item::setBeingCollected(bool beingCollected) { m_beingCollected = beingCollected; }
+bool Item::isBeingCollected() const { return m_beingCollected; }
+
 /* vim: set ts=4 sw=4 et :*/

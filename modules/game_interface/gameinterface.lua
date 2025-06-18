@@ -637,9 +637,11 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
         end
 
         if not useThing:isContainer() and not useThing:isGround() and useThing:isNotMoveable() and not useThing:isPickupable() then
-            menu:addOption(tr('Collect'), function()
-                g_game.collect(useThing)
-            end)
+            if modules.game_build and modules.game_build.Collect.isCollectableItem(useThing:getId()) then
+                menu:addOption(tr('Collect'), function()
+                  g_game.use(useThing)
+                end)
+            end
         end
     end
 

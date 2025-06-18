@@ -9,21 +9,21 @@
 #include <framework/core/eventdispatcher.h>
 #include <cmath>
 
-AnimatedResource::AnimatedResource(const Position& from, const Position& to, int durationMs)
-    : m_from(from), m_to(to), m_duration(durationMs)
+AnimatedResource::AnimatedResource(const Position& from, const Position& to, const std::string& resourceName, int durationMs)
+    : m_from(from), m_to(to), m_duration(durationMs), m_resourceName(resourceName)
 {
     m_timer.restart();
     scheduleNextUpdate();
 
     // Carrega a textura da animação
-    m_texture = g_textures.getTexture("/images/resources/wood.png");
+    m_texture = g_textures.getTexture("/images/resources/" + resourceName + ".png");
     if (!m_texture) {
-        g_logger.error("Failed to load texture /images/resources/wood.png");
+        g_logger.error("Failed to load texture /images/resources/" + resourceName + ".png");
     }
     // Carrega um ThingType dummy apenas para evitar crash em getThingType
     m_thingType = g_things.getThingType(1, ThingCategoryEffect);
     if (!m_thingType) {
-        g_logger.error("Failed to load thing type wood");
+        g_logger.error("Failed to load thing type " + resourceName);
     }
 }
 

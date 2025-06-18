@@ -17,7 +17,7 @@ using AnimatedResourcePtr = std::shared_ptr<AnimatedResource>;
 class AnimatedResource : public Thing {
 public:
     // Construtor: inicializa a animação entre duas posições, com duração customizável
-    AnimatedResource(const Position& from, const Position& to, int durationMs = 500);
+    AnimatedResource(const Position& from, const Position& to, const std::string& resourceName, int durationMs = 500);
 
     // Desenha a animação na tela
     void draw(const Point& dest, bool drawThings = true, const LightViewPtr& lightView = nullptr) override;
@@ -48,6 +48,7 @@ private:
     Position m_to;
     Timer m_timer;
     int m_duration;
+    std::string m_resourceName;
     TexturePtr m_texture;
     std::shared_ptr<ThingType> m_thingType;
     bool m_finished = false;

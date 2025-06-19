@@ -972,7 +972,16 @@ void Game::collect(ItemPtr item)
     if (!canPerformGameAction())
         return;
 
-    item->collect();
+    if (item) {
+        item->collect();
+    } else {
+        // Se item é nulo, cancela a coleta do item atual do jogador
+        if (auto player = getLocalPlayer()) {
+            if (auto collectingItem = player->getCollectingItem()) {
+                collectingItem->collect();
+            }
+        }
+    }
 }
 
 void Game::follow(CreaturePtr creature)

@@ -35,7 +35,6 @@ function Collect.isCollectableItem(itemId)
 end 
 
 function Collect._onExtendedOpcode(protocol, opcode, buffer)
-  print("onExtendedOpcode3", opcode, buffer, Collect.opCode, tonumber(opcode) == tonumber(Collect.opCode))
   if tonumber(opcode) ~= tonumber(Collect.opCode) then return end
   local json_status, json_data =
   pcall(
@@ -54,13 +53,9 @@ function Collect._onExtendedOpcode(protocol, opcode, buffer)
     Collect.onTryCollectResource(data)
   elseif action == "startCollectResource" then
     Collect.onStartCollectResource(data)
+  elseif action == "collectingUpdate" then
+    Collect.onCollectingUpdate(data)
   end
-end
-
-function Collect.onCollectResource(item, position)
-  print("onCollectResource")
-  g_game.collect(item)
-  g_game.getProtocolGame():sendExtendedOpcode(11, json.encode({ action = "onCollectResource" }))
 end
 
 function Collect.onStartCollectResource(data)
@@ -70,11 +65,14 @@ function Collect.onStartCollectResource(data)
   if not item or not item:isItem()  or item:getId() ~= data.itemId then return end
 
   g_game.collect(item)
-  -- modules.game_build.Collect.onCollectResource(item, data.position)
 end
 
 -- Função de teste para a animação de recursos
 function Collect.onTryCollectResource(data)
+  if not data.success then
+    return
+  end
+
   local fromPos = data.pos1
   local toPos = data.pos2
   local count = data.count
@@ -86,4 +84,17 @@ function Collect.onTryCollectResource(data)
       animateResourceToPlayer(fromPos, toPos, type, 1000)
     end, 150 * i)
   end
+end
+
+function Collect.onCollectingUpdate(data)
+  local collecting = data.collecting
+  print("onCollectingUpdate", collecting)
+  if collecting == 0 then
+    print("onStopCollecting")
+    Collect.onStopCollecting()
+  end
+end
+
+function Collect.onStopCollecting()
+  g_game.collect(nil)
 end

@@ -462,7 +462,7 @@ void Item::setBeingCollected(bool beingCollected) {
     m_beingCollected = beingCollected;
 }
 
-bool Item::isBeingCollected() const { return m_beingCollected; }
+bool Item::isBeingCollected() { return m_beingCollected; }
 
 void Item::collect() {
     bool wasBeingCollected = isBeingCollected();

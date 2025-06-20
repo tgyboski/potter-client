@@ -56,6 +56,8 @@ function Collect.onStart(data)
   local item = tile:getTopUseThing()
   if not item or not item:isItem() or item:getId() ~= data.itemId or not g_things.isCollectableItem(item:getId()) then return end
 
+  item:setIsCollectableItem(true)
+
   g_game.collect(item)
 end
 

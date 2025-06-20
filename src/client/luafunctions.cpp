@@ -754,6 +754,12 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Item>("hasClockExpire", &ThingType::hasClockExpire);
     g_lua.bindClassMemberFunction<Item>("hasExpire", &ThingType::hasExpire);
     g_lua.bindClassMemberFunction<Item>("hasExpireStop", &ThingType::hasExpireStop);
+    
+    g_lua.bindClassMemberFunction<Item>("setBeingCollected", &Item::setBeingCollected);
+    g_lua.bindClassMemberFunction<Item>("isBeingCollected", &Item::isBeingCollected);
+    g_lua.bindClassMemberFunction<Item>("setIsCollectableItem", &Item::setIsCollectableItem);
+    g_lua.bindClassMemberFunction<Item>("isCollectableItem", &Item::isCollectableItem);
+    
 #ifdef FRAMEWORK_EDITOR
     g_lua.bindClassMemberFunction<Item>("getName", &Item::getName);
     g_lua.bindClassMemberFunction<Item>("getServerId", &Item::getServerId);
@@ -777,8 +783,6 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Item>("setActionId", &Item::setActionId);
     g_lua.bindClassMemberFunction<Item>("getTeleportDestination", &Item::getTeleportDestination);
     g_lua.bindClassMemberFunction<Item>("setTeleportDestination", &Item::setTeleportDestination);
-    g_lua.bindClassMemberFunction<Item>("setBeingCollected", &Item::setBeingCollected);
-    g_lua.bindClassMemberFunction<Item>("isBeingCollected", &Item::isBeingCollected);
 #endif
 
     g_lua.registerClass<Effect, Thing>();

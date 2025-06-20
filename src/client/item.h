@@ -116,11 +116,13 @@ public:
     void onPositionChange(const Position& /*newPos*/, const Position& /*oldPos*/) override { updatePatterns(); }
 
     void setBeingCollected(bool beingCollected);
-    bool isBeingCollected() const;
+    bool isBeingCollected();
     void collect();
 
     void setCollectingPlayer(const LocalPlayerPtr& player) { m_collectingPlayer = player; }
     LocalPlayerPtr getCollectingPlayer() const { return m_collectingPlayer; }
+    bool isCollectableItem() { return m_isCollectableItem; }
+    void setIsCollectableItem(bool isCollectableItem) { m_isCollectableItem = isCollectableItem; }
 
 #ifdef FRAMEWORK_EDITOR
     std::string getName();
@@ -184,6 +186,7 @@ private:
 
     bool m_beingCollected{ false };
     LocalPlayerPtr m_collectingPlayer{ nullptr };
+    bool m_isCollectableItem{ false };
 
 #ifdef FRAMEWORK_EDITOR
     uint16_t m_serverId{ 0 };

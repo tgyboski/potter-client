@@ -75,6 +75,27 @@ void Tile::draw(const Point& dest, const int flags, const LightViewPtr& lightVie
             break;
 
         drawThing(thing, dest, flags, drawElevation);
+        
+        // Desenhar barra de vida para itens coletáveis DEPOIS do item
+        if (thing->isItem()) {
+          const auto& itemPtr = thing->static_self_cast<Item>();
+          if (itemPtr->isCollectableItem()) {
+            g_logger.info("11 Desenhando item coletável - ID: " + std::to_string(itemPtr->getId()) + ", Posição: " + getPosition().toString());
+            
+            // Calcular posição da barra acima do item
+            Point barDest = dest;
+            barDest.y += 26; // Posicionar acima do item
+            barDest.x += 7;
+            
+            // Barra de fundo preta
+            Rect backgroundRect(barDest.x, barDest.y, 18, 3);
+            g_drawPool.addFilledRect(backgroundRect, Color::black);
+            
+            // Barra de progresso verde
+            Rect progressRect(barDest.x + 1, barDest.y + 1, 16, 1);
+            g_drawPool.addFilledRect(progressRect, Color::green);
+          }
+        }
     }
 
     drawAttachedEffect(dest, lightView, false);
@@ -213,6 +234,12 @@ void Tile::drawTop(const Point& dest, const int flags, const bool forceDraw, uin
     if (hasTopItem()) {
         for (const auto& item : m_things) {
             if (!item->isOnTop()) continue;
+            
+            // Debug log para itens coletáveis
+            if (item->isItem() && item->static_self_cast<Item>()->isCollectableItem()) {
+                g_logger.info("Desenhando item coletável (on top) - ID: " + std::to_string(item->getId()) + ", Posição: " + getPosition().toString());
+            }
+            
             item->draw(dest, flags & Otc::DrawThings);
         }
     }

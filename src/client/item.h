@@ -68,6 +68,7 @@ enum ItemAttr : uint8_t
     ATTR_LAST
 };
 
+
 // @bindclass
 #pragma pack(push,1) // disable memory alignment
 class Item final : public Thing

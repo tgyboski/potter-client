@@ -2,11 +2,6 @@ Collect = {
   opCode = 11,
 }
 
--- IDs dos itens que podem ser coletados
-Collect.CollectableItems = {
-    3617, 3619, 3614, 3621, 3616, 3634, 3630, 3629, 1852, 6189, 1859, 1860, 1874, 1857, 1873, 1872, 3632
-}
-
 function init()
     connect(g_game, { onGameStart = Collect.onGameStart })
     connect(g_game, { onGameEnd = Collect.onGameEnd })
@@ -26,13 +21,8 @@ function Collect.onGameEnd()
 end
 
 function Collect.isCollectableItem(itemId)
-  for _, id in ipairs(Collect.CollectableItems) do
-    if itemId == id then
-      return true
-    end
-  end
-  return false
-end 
+  return g_things.isCollectableItem(itemId)
+end
 
 function Collect._onExtendedOpcode(protocol, opcode, buffer)
   if tonumber(opcode) ~= tonumber(Collect.opCode) then return end
@@ -64,7 +54,7 @@ function Collect.onStart(data)
   local tile = g_map.getTile(data.position)
   if not tile then return end
   local item = tile:getTopUseThing()
-  if not item or not item:isItem()  or item:getId() ~= data.itemId then return end
+  if not item or not item:isItem() or item:getId() ~= data.itemId or not g_things.isCollectableItem(item:getId()) then return end
 
   g_game.collect(item)
 end
@@ -79,6 +69,11 @@ function Collect.onTry(data)
   local toPos = data.pos2
   local count = data.count
   local type = data.type
+
+  local tile = g_map.getTile(data.pos1)
+  if not tile then return end
+  local item = tile:getTopUseThing()
+  if not item or not item:isItem() or item:getId() ~= data.itemId or not g_things.isCollectableItem(item:getId()) then return end
   
   -- Anima o item da posição ao lado até o jogador
   for i = 1, count do

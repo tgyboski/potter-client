@@ -30,6 +30,11 @@
 #include "itemtype.h"
 #endif
 
+// Lista de IDs de itens que podem ser coletados
+static const std::vector<uint16_t> COLLECTABLE_ITEM_IDS = {
+    3617, 3619, 3614, 3621, 3616, 3634, 3630
+};
+
 using RaceList = std::vector<RaceType>;
 static const RaceType emptyRaceType{};
 
@@ -82,6 +87,12 @@ public:
 
     bool isDatLoaded() { return m_datLoaded; }
     bool isValidDatId(const uint16_t id, const ThingCategory category) const { return id >= 1 && id < m_thingTypes[category].size(); }
+
+    bool isCollectableItem(uint16_t id) { 
+        return std::find(COLLECTABLE_ITEM_IDS.begin(), COLLECTABLE_ITEM_IDS.end(), id) != COLLECTABLE_ITEM_IDS.end(); 
+    }
+
+    const std::vector<uint16_t>& getCollectableIds() { return COLLECTABLE_ITEM_IDS; }
 
 private:
     ThingTypeList m_thingTypes[ThingLastCategory];

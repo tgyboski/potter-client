@@ -49,16 +49,18 @@ function Collect._onExtendedOpcode(protocol, opcode, buffer)
   local action = json_data["action"]
   local data = json_data["data"]
 
-  if action == "tryCollectResource" then
-    Collect.onTryCollectResource(data)
-  elseif action == "startCollectResource" then
-    Collect.onStartCollectResource(data)
-  elseif action == "collectingUpdate" then
-    Collect.onCollectingUpdate(data)
+  if action == "try" then
+    Collect.onTry(data)
+  elseif action == "start" then
+    Collect.onStart(data)
+  elseif action == "update" then
+    Collect.onUpdate(data)
+  elseif action == "stop" then
+    Collect.onStop()
   end
 end
 
-function Collect.onStartCollectResource(data)
+function Collect.onStart(data)
   local tile = g_map.getTile(data.position)
   if not tile then return end
   local item = tile:getTopUseThing()
@@ -68,7 +70,7 @@ function Collect.onStartCollectResource(data)
 end
 
 -- Função de teste para a animação de recursos
-function Collect.onTryCollectResource(data)
+function Collect.onTry(data)
   if not data.success then
     return
   end
@@ -86,15 +88,13 @@ function Collect.onTryCollectResource(data)
   end
 end
 
-function Collect.onCollectingUpdate(data)
+function Collect.onUpdate(data)
   local collecting = data.collecting
-  print("onCollectingUpdate", collecting)
   if collecting == 0 then
-    print("onStopCollecting")
-    Collect.onStopCollecting()
+    Collect.onStop()
   end
 end
 
-function Collect.onStopCollecting()
+function Collect.onStop()
   g_game.collect(nil)
 end

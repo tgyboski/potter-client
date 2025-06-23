@@ -80,7 +80,11 @@ void Tile::draw(const Point& dest, const int flags, const LightViewPtr& lightVie
         if (thing->isItem()) {
           const auto& itemPtr = thing->static_self_cast<Item>();
           if (itemPtr->isCollectableItem()) {
-            g_logger.info("11 Desenhando item coletável - ID: " + std::to_string(itemPtr->getId()) + ", Posição: " + getPosition().toString());
+            
+            int resourceHealth = itemPtr->getCharges();
+            if (resourceHealth == 0) {
+              resourceHealth = 100;
+            }
             
             // Calcular posição da barra acima do item
             Point barDest = dest;
@@ -92,7 +96,7 @@ void Tile::draw(const Point& dest, const int flags, const LightViewPtr& lightVie
             g_drawPool.addFilledRect(backgroundRect, Color::black);
             
             // Barra de progresso verde
-            Rect progressRect(barDest.x + 1, barDest.y + 1, 16, 1);
+            Rect progressRect(barDest.x + 1, barDest.y + 1, 16 * resourceHealth / 100, 1);
             g_drawPool.addFilledRect(progressRect, Color::green);
           }
         }

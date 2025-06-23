@@ -759,6 +759,9 @@ void Client::registerLuaFunctions()
     g_lua.bindClassMemberFunction<Item>("isBeingCollected", &Item::isBeingCollected);
     g_lua.bindClassMemberFunction<Item>("setIsCollectableItem", &Item::setIsCollectableItem);
     g_lua.bindClassMemberFunction<Item>("isCollectableItem", &Item::isCollectableItem);
+
+    g_lua.bindClassMemberFunction<Item>("setCharges", &Item::setCharges);
+    g_lua.bindClassMemberFunction<Item>("getCharges", &Item::getCharges);
     
 #ifdef FRAMEWORK_EDITOR
     g_lua.bindClassMemberFunction<Item>("getName", &Item::getName);

@@ -63,25 +63,34 @@ end
 
 -- Função de teste para a animação de recursos
 function Collect.onTry(data)
-  if not data.success then
-    return
-  end
-
+  print(json.encode(data))
   local fromPos = data.pos1
   local toPos = data.pos2
-  local count = data.count
+  local count = success and data.count or 1
   local type = data.type
 
-  local tile = g_map.getTile(data.pos1)
-  if not tile then return end
-  local item = tile:getTopUseThing()
-  if not item or not item:isItem() or item:getId() ~= data.itemId or not g_things.isCollectableItem(item:getId()) then return end
+  print(count)
   
+  local tile = g_map.getTile(data.pos1)
+  if not tile then print("2") return end
+  local item = tile:getTopUseThing()
+  print(item:getId())
+  if not item or not item:isItem() or item:getId() ~= data.itemId or not g_things.isCollectableItem(item:getId()) then print("1") return end
+
+  item:setCharges(data.resourceHealth) -- Atualiza a barra de vida do item
+
+  print(item:getCharges())
+
+
+  
+  print(json.encode(data))
   -- Anima o item da posição ao lado até o jogador
-  for i = 1, count do
-    scheduleEvent(function()
-      animateResourceToPlayer(fromPos, toPos, type, 1000)
-    end, 150 * i)
+  if data.success then
+    for i = 1, count do
+      scheduleEvent(function()
+        animateResourceToPlayer(fromPos, toPos, type, 1000)
+      end, 150 * i)
+    end
   end
 end
 

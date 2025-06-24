@@ -119,8 +119,8 @@ void WebView2Panel::resize() {
         controller->put_Bounds(bounds);
         // Garantir que a janela está visível após o redimensionamento
         // if (m_visible) {
-          ShowWindow(hwnd, SW_SHOW);
-          UpdateWindow(hwnd);
+          // ShowWindow(hwnd, SW_SHOW);
+          // UpdateWindow(hwnd);
         // }
     }
 }
@@ -337,87 +337,13 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
                                     m_messageCallbacks["navigationCompleted"]("");
                                 }
                             } else {
-                                // Obter mais informações sobre a falha
-                                COREWEBVIEW2_WEB_ERROR_STATUS webErrorStatus;
-                                HRESULT hr = args->get_WebErrorStatus(&webErrorStatus);
-                                if (SUCCEEDED(hr)) {
-                                    std::string errorStatusStr;
-                                    switch (webErrorStatus) {
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_UNKNOWN:
-                                            errorStatusStr = "Erro desconhecido";
-                                            break;
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_CERTIFICATE_COMMON_NAME_IS_INCORRECT:
-                                            errorStatusStr = "Certificado com nome incorreto";
-                                            break;
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_CERTIFICATE_EXPIRED:
-                                            errorStatusStr = "Certificado expirado";
-                                            break;
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_CLIENT_CERTIFICATE_CONTAINS_ERRORS:
-                                            errorStatusStr = "Erro no certificado do cliente";
-                                            break;
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_CERTIFICATE_REVOKED:
-                                            errorStatusStr = "Certificado revogado";
-                                            break;
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_CERTIFICATE_IS_INVALID:
-                                            errorStatusStr = "Certificado inválido";
-                                            break;
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_SERVER_UNREACHABLE:
-                                            errorStatusStr = "Servidor inacessível";
-                                            break;
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_TIMEOUT:
-                                            errorStatusStr = "Timeout";
-                                            break;
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_ERROR_HTTP_INVALID_SERVER_RESPONSE:
-                                            errorStatusStr = "Resposta inválida do servidor";
-                                            break;
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_CONNECTION_ABORTED:
-                                            errorStatusStr = "Conexão abortada";
-                                            break;
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_CONNECTION_RESET:
-                                            errorStatusStr = "Conexão resetada";
-                                            break;
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_DISCONNECTED:
-                                            errorStatusStr = "Desconectado";
-                                            break;
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_CANNOT_CONNECT:
-                                            errorStatusStr = "Não foi possível conectar";
-                                            break;
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_HOST_NAME_NOT_RESOLVED:
-                                            errorStatusStr = "Nome do host não resolvido";
-                                            break;
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_OPERATION_CANCELED:
-                                            errorStatusStr = "Operação cancelada";
-                                            break;
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_REDIRECT_FAILED:
-                                            errorStatusStr = "Redirecionamento falhou";
-                                            break;
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_UNEXPECTED_ERROR:
-                                            errorStatusStr = "Erro inesperado";
-                                            break;
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_VALID_AUTHENTICATION_CREDENTIALS_REQUIRED:
-                                            errorStatusStr = "Credenciais de autenticação necessárias";
-                                            break;
-                                        case COREWEBVIEW2_WEB_ERROR_STATUS_VALID_PROXY_AUTHENTICATION_REQUIRED:
-                                            errorStatusStr = "Autenticação de proxy necessária";
-                                            break;
-                                        default:
-                                            errorStatusStr = "Erro não mapeado (código: " + std::to_string(webErrorStatus) + ")";
-                                            break;
-                                    }
-                                    
-                                    g_logger.error("Falha na navegação - Status: " + errorStatusStr + " (Código: " + std::to_string(webErrorStatus) + ")");
-                                } else {
-                                    g_logger.error("Falha na navegação - Não foi possível obter detalhes do erro (HRESULT: " + std::to_string(hr) + ")");
-                                }
-                                
-                                    g_logger.error("FaAAAAA");
+                                g_logger.error("Falha na navegação");
                             }
                             return S_OK;
                         }).Get(),
                     &token);
 
                 callback(true);
-                this->hide();
 
                 return S_OK;
             }).Get());

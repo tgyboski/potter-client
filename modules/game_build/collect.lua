@@ -2,12 +2,12 @@ Collect = {
   opCode = 11,
 }
 
-function init()
+function Collect.init()
     connect(g_game, { onGameStart = Collect.onGameStart })
     connect(g_game, { onGameEnd = Collect.onGameEnd })
 end
 
-function terminate()
+function Collect.terminate()
     disconnect(g_game, { onGameStart = Collect.onGameStart })
     disconnect(g_game, { onGameEnd = Collect.onGameEnd })
 end

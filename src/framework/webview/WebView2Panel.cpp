@@ -37,7 +37,7 @@ WebView2Panel::WebView2Panel(HWND parentHwnd) : UIWidget(), hwnd(nullptr), paren
         WS_EX_CLIENTEDGE,
         "WebView2PanelClass",
         "WebView2Panel",
-        WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+        WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
         0, 0, parentRect.right - parentRect.left, parentRect.bottom - parentRect.top,
         parentHwnd,
         NULL,
@@ -277,6 +277,16 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
                     return E_FAIL;
                 }
 
+                ICoreWebView2Controller2* rawController2 = nullptr;
+                HRESULT hrCast = controller->QueryInterface(IID_PPV_ARGS(&rawController2));
+                if (SUCCEEDED(hrCast) && rawController2) {
+                    COREWEBVIEW2_COLOR transparent = { 0, 0, 0, 0 }; // RGBA
+                    rawController2->put_DefaultBackgroundColor(transparent);
+                    rawController2->Release(); // Libera referência, pois usamos ponteiro cru
+                } else {
+                    g_logger.warning("ICoreWebView2Controller2 não disponível, transparência não aplicada.");
+                }
+
                 webview->add_WebMessageReceived(
                     Microsoft::WRL::Callback<ICoreWebView2WebMessageReceivedEventHandler>(
                         [this](ICoreWebView2* sender, ICoreWebView2WebMessageReceivedEventArgs* args) -> HRESULT {
@@ -303,7 +313,7 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
                 resize();
 
                 // Habilitar a WebView
-                controller->put_IsVisible(TRUE);
+                controller->put_IsVisible(FALSE);
 
                 // Configurar eventos de navegação
                 EventRegistrationToken token;
@@ -332,6 +342,7 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
                     &token);
 
                 callback(true);
+                this->hide();
 
                 return S_OK;
             }).Get());

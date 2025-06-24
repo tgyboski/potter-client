@@ -38,8 +38,6 @@ local function getUrlBase()
   return "file://" .. g_resources.getWorkDir() .. "/data/webview/start.html#/"
 end
 
-disconnect(g_game, { onGameEnd = webviewOnGameEnd })
-
 function openWebView(url, params)
   local fullUrl = getUrlBase() .. url
   
@@ -54,6 +52,7 @@ function openWebView(url, params)
   
   -- Se já existe uma WebView, apenas atualiza a URL
   if currentWebView then
+    g_logger.info("Atualizando WebView: " .. fullUrl)
     currentWebView:loadUrl(fullUrl)
 
     if webviewShowEvent then
@@ -66,6 +65,8 @@ function openWebView(url, params)
     
     return currentWebView
   end
+
+  g_logger.info("Criando nova WebView: " .. fullUrl)
   
   -- Cria nova WebView se não existir
   currentWebView = WebView2Panel.create(fullUrl)
@@ -78,12 +79,9 @@ end
 
 webviewCloseCallback = function(parameters)
   g_logger.info("WEBVIEW CLOSE")
-  currentWebView:hide()
-end
-
-function webviewOnGameEnd()
-  g_logger.info("WEBVIEW ON GAME END")
   if currentWebView then
     currentWebView:hide()
+    return true
   end
+  return false
 end

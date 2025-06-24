@@ -5,14 +5,12 @@ Webview = {
 
 function init()
   ProtocolGame.registerExtendedOpcode(OPCODE_CODE_BUILDING_ITEMS, onExtendedOpcode)
-  
-  -- Adiciona o evento de teste da animação
-  testResourceAnimationEvent()
+  Collect.init()
 end
 
 function terminate()
-  webviewOnGameEnd()
   ProtocolGame.unregisterExtendedOpcode(OPCODE_CODE_BUILDING_ITEMS, onExtendedOpcode)
+  Collect.terminate()
 end
 
 local function getBuildableItems()
@@ -21,14 +19,13 @@ local function getBuildableItems()
       return false
   end
   
-  g_game.getProtocolGame():sendExtendedOpcode(10, json.encode({ action = "getBuildingItems" }))
+  g_game.getProtocolGame():sendExtendedOpcode(OPCODE_CODE_BUILDING_ITEMS, json.encode({ action = "getBuildingItems" }))
 end
 
 function getWebview()
   if not Webview.webview then
-    print("webview not found")
+    g_logger.error("Webview not found")
   end
-  print("webview found")
   return Webview.webview
 end
 
@@ -80,39 +77,4 @@ end
 function isBuilding()
   if not getWebview() then return false end
   return getWebview():isBuilding()
-end
-
--- Função de teste para a animação de recursos
-function testResourceAnimation()
-  local player = g_game.getLocalPlayer()
-  if not player then return end
-  
-  local playerPos = player:getPosition()
-  if not playerPos then return end
-  
-  -- Pega a posição do SQM ao lado do jogador (direita)
-  local fromPos = { x = playerPos.x - 1, y = playerPos.y + 1, z = playerPos.z }
-  
-  -- Anima o item da posição ao lado até o jogador
-  animateResourceToPlayer(fromPos, playerPos, 5901, 1000)
-end
-
-function testResourceAnimationEvent()
-  print("testResourceAnimation")
-
-  scheduleEvent(function()
-    testResourceAnimationEvent()
-    return true -- retorna true para continuar o evento
-  end, 2000) -- 1000ms = 1 segundo
-
-  testResourceAnimation()
-  scheduleEvent(function()
-    testResourceAnimation()
-
-    scheduleEvent(function()
-      testResourceAnimation()
-      return true
-    end, 100)
-    return true
-  end, 100)
 end

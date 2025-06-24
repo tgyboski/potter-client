@@ -16,7 +16,6 @@ void WebView2Manager::initialize(HWND parentHwnd) {
                 m_initialized = true;
                 g_logger.info("WebView2 inicializada com sucesso");
                 // Configura o WebViewPanel no Client
-                m_webView->hide();
                 g_client.setWebViewPanel(std::unique_ptr<WebView2Panel>(m_webView.get()));
             } else {
                 g_logger.error("Falha ao inicializar WebView2");

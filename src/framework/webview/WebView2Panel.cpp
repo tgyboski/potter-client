@@ -37,7 +37,7 @@ WebView2Panel::WebView2Panel(HWND parentHwnd) : UIWidget(), hwnd(nullptr), paren
         WS_EX_CLIENTEDGE,
         "WebView2PanelClass",
         "WebView2Panel",
-        WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+        WS_CHILD | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
         0, 0, parentRect.right - parentRect.left, parentRect.bottom - parentRect.top,
         parentHwnd,
         NULL,
@@ -118,10 +118,10 @@ void WebView2Panel::resize() {
         GetClientRect(hwnd, &bounds);
         controller->put_Bounds(bounds);
         // Garantir que a janela está visível após o redimensionamento
-        // if (m_visible) {
-          // ShowWindow(hwnd, SW_SHOW);
-          // UpdateWindow(hwnd);
-        // }
+        if (m_visible) {
+          ShowWindow(hwnd, SW_SHOW);
+          UpdateWindow(hwnd);
+        }
     }
 }
 
@@ -315,7 +315,7 @@ void WebView2Panel::CreateWebView(std::function<void(bool)> callback) {
                 resize();
 
                 // Habilitar a WebView
-                controller->put_IsVisible(FALSE);
+                controller->put_IsVisible(TRUE);
 
                 // Configurar eventos de navegação
                 EventRegistrationToken token;

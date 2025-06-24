@@ -35,7 +35,10 @@ local function WebViewEncodeAccents(str)
 end
 
 local function getUrlBase()
-  return "file://" .. g_resources.getWorkDir() .. "/data/webview/start.html#/"
+  local workDir = g_resources.getWorkDir()
+  -- Substitui barras invertidas por barras normais para URLs
+  workDir = string.gsub(workDir, "\\", "/")
+  return "file:///" .. workDir .. "data/webview/start.html#/"
 end
 
 function openWebView(url, params)

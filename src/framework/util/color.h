@@ -113,7 +113,10 @@ public:
         green, darkGreen, blue, darkBlue,
         pink, darkPink, yellow, darkYellow,
         teal, darkTeal, gray, darkGray,
-        lightGray, orange;
+        lightGray, orange, purple, darkPurple,
+        lightPurple, brown, darkBrown,
+        lightBrown, gold, darkGold,
+        lightGold, silver;
 
     friend std::ostream& operator<<(std::ostream& out, const Color& color);
     friend std::istream& operator>>(std::istream& in, Color& color);

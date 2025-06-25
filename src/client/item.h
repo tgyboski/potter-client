@@ -89,6 +89,7 @@ public:
     void setTooltip(const std::string& str) { m_tooltip = str; }
     void setDurationTime(const uint32_t durationTime) { m_durationTime = durationTime; }
     void setCharges(const uint32_t charges) { m_charges = charges; }
+    void setResourceHealth(const int resourceHealth) { m_resourceHealth = resourceHealth; }
     void setTier(const uint8_t tier) { m_tier = tier; }
 
     int getCountOrSubType() { return m_countOrSubType; }
@@ -97,6 +98,7 @@ public:
     std::string getTooltip() { return m_tooltip; }
     uint32_t getDurationTime() { return m_durationTime; }
     uint32_t getCharges() { return m_charges; }
+    int getResourceHealth() { return m_resourceHealth; }
     uint8_t getTier() { return m_tier; }
 
     bool isValid() { return getThingType() != nullptr; }
@@ -122,7 +124,9 @@ public:
     void setCollectingPlayer(const LocalPlayerPtr& player) { m_collectingPlayer = player; }
     LocalPlayerPtr getCollectingPlayer() const { return m_collectingPlayer; }
     bool isCollectableItem() { return m_isCollectableItem; }
-    void setIsCollectableItem(bool isCollectableItem) { m_isCollectableItem = isCollectableItem; }
+    void setIsCollectableItem(bool isCollectableItem, std::string resourceType) { m_isCollectableItem = isCollectableItem; m_resourceType = resourceType; }
+    std::string getResourceType() { return m_resourceType; }
+    Color getResourceColor();
 
 #ifdef FRAMEWORK_EDITOR
     std::string getName();
@@ -174,9 +178,9 @@ private:
     uint16_t m_countOrSubType{ 0 };
     uint32_t m_durationTime{ 0 };
     uint32_t m_charges{ 0 };
+    int m_resourceHealth{ 100 };
     uint8_t m_tier{ 0 };
     uint8_t m_phase{ 0 };
-
     Color m_color{ Color::white };
 
     ticks_t m_lastPhase{ 0 };
@@ -187,6 +191,7 @@ private:
     bool m_beingCollected{ false };
     LocalPlayerPtr m_collectingPlayer{ nullptr };
     bool m_isCollectableItem{ false };
+    std::string m_resourceType;
 
 #ifdef FRAMEWORK_EDITOR
     uint16_t m_serverId{ 0 };

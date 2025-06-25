@@ -46,6 +46,16 @@ const Color Color::gray = 0xffa0a0a0U;
 const Color Color::darkGray = 0xff808080U;
 const Color Color::lightGray = 0xffc0c0c0U;
 const Color Color::orange = 0xff008cffU;
+const Color Color::purple = 0xff8000ffU;
+const Color Color::darkPurple = 0xff400080U;
+const Color Color::lightPurple = 0xffc000ffU;
+const Color Color::brown = 0xff2a2aa5U;
+const Color Color::darkBrown = 0xff13458bU;
+const Color Color::lightBrown = 0xff87b8deU;
+const Color Color::gold = 0xff00d7ffU;
+const Color Color::darkGold = 0xff327fcdU;
+const Color Color::lightGold = 0xffa8e0ffU;
+const Color Color::silver = 0xffc0c0c0U;
 
 Color::Color(const std::string_view coltext)
 {
@@ -126,6 +136,26 @@ std::istream& operator>>(std::istream& in, Color& color)
             color = Color::lightGray;
         } else if (tmp == "orange") {
             color = Color::orange;
+        } else if (tmp == "purple") {
+            color = Color::purple;
+        } else if (tmp == "darkPurple") {
+            color = Color::darkPurple;
+        } else if (tmp == "lightPurple") {
+            color = Color::lightPurple;
+        } else if (tmp == "brown") {
+            color = Color::brown;
+        } else if (tmp == "darkBrown") {
+            color = Color::darkBrown;
+        } else if (tmp == "lightBrown") {
+            color = Color::lightBrown;
+        } else if (tmp == "gold") {
+            color = Color::gold;
+        } else if (tmp == "darkGold") {
+            color = Color::darkGold;
+        } else if (tmp == "lightGold") {
+            color = Color::lightGold;
+        } else if (tmp == "silver") {
+            color = Color::silver;
         } else {
             in.seekg(0 - tmp.length(), std::ios_base::cur);
         }

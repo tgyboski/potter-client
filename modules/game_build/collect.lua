@@ -56,7 +56,7 @@ function Collect.onStart(data)
   local item = tile:getTopUseThing()
   if not item or not item:isItem() or item:getId() ~= data.itemId or not g_things.isCollectableItem(item:getId()) then return end
 
-  item:setIsCollectableItem(true)
+  item:setIsCollectableItem(true, data.type)
 
   g_game.collect(item)
 end
@@ -77,9 +77,9 @@ function Collect.onTry(data)
   print(item:getId())
   if not item or not item:isItem() or item:getId() ~= data.itemId or not g_things.isCollectableItem(item:getId()) then print("1") return end
 
-  item:setCharges(data.resourceHealth) -- Atualiza a barra de vida do item
+  item:setResourceHealth(data.resourceHealth) -- Atualiza a barra de vida do item
 
-  print(item:getCharges())
+  print(item:getResourceHealth())
 
 
   

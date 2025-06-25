@@ -584,7 +584,11 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
         shortcut = nil
     end
     if useThing then
-        if useThing:isContainer() then
+        if g_things.isCollectableItem(useThing:getId()) then
+            menu:addOption(tr('Collect'), function()
+              g_game.use(useThing)
+            end)
+        elseif useThing:isContainer() then
             if useThing:getParentContainer() then
                 menu:addOption(tr('Open'), function()
                     g_game.open(useThing, useThing:getParentContainer())
@@ -634,14 +638,6 @@ function createThingMenu(menuPosition, lookThing, useThing, creatureThing)
             menu.addOption(menu, tr("Loot corpse"), function()
                 g_game.sendQuickLoot(1, useThing)
             end)
-        end
-
-        if not useThing:isContainer() and not useThing:isGround() and useThing:isNotMoveable() and not useThing:isPickupable() then
-            if g_things.isCollectableItem(useThing:getId()) then
-                menu:addOption(tr('Collect'), function()
-                  g_game.use(useThing)
-                end)
-            end
         end
     end
 

@@ -81,10 +81,7 @@ void Tile::draw(const Point& dest, const int flags, const LightViewPtr& lightVie
           const auto& itemPtr = thing->static_self_cast<Item>();
           if (itemPtr->isCollectableItem()) {
             
-            int resourceHealth = itemPtr->getCharges();
-            if (resourceHealth == 0) {
-              resourceHealth = 100;
-            }
+            int resourceHealth = itemPtr->getResourceHealth();
             
             // Calcular posição da barra acima do item
             Point barDest = dest;
@@ -97,7 +94,7 @@ void Tile::draw(const Point& dest, const int flags, const LightViewPtr& lightVie
             
             // Barra de progresso verde
             Rect progressRect(barDest.x + 1, barDest.y + 1, 16 * resourceHealth / 100, 1);
-            g_drawPool.addFilledRect(progressRect, Color::green);
+            g_drawPool.addFilledRect(progressRect, Color::orange);
           }
         }
     }

@@ -494,33 +494,20 @@ Color Item::getResourceColor() {
     Color resultColor;
     
     if (m_resourceType == "wood") {
-        g_logger.info("Resource type: " + m_resourceType + " -> Color: brown");
         resultColor = Color::brown;
     } else if (m_resourceType == "ore") {
-        g_logger.info("Resource type: " + m_resourceType + " -> Color: gray");
-        resultColor = Color::gray;
+        resultColor = Color::black;
     } else if (m_resourceType == "stone") {
-        g_logger.info("Resource type: " + m_resourceType + " -> Color: darkBrown");
-        resultColor = Color::darkBrown;
+        resultColor = Color::gray;
     } else if (m_resourceType == "coal") {
-        g_logger.info("Resource type: " + m_resourceType + " -> Color: darkBrown");
         resultColor = Color::darkBrown;
     } else if (m_resourceType == "iron") {
-        g_logger.info("Resource type: " + m_resourceType + " -> Color: darkBrown");
         resultColor = Color::darkBrown;
     } else if (m_resourceType == "gold") {
-        g_logger.info("Resource type: " + m_resourceType + " -> Color: gold");
         resultColor = Color::gold;
     } else {
-        g_logger.info("Resource type: " + m_resourceType + " -> Color: orange (default)");
         resultColor = Color::orange;
     }
-    
-    // Log dos valores RGB da cor
-    g_logger.info("Color RGB values - R:" + std::to_string(resultColor.r()) + 
-                  " G:" + std::to_string(resultColor.g()) + 
-                  " B:" + std::to_string(resultColor.b()) + 
-                  " A:" + std::to_string(resultColor.a()));
     
     return resultColor;
 }

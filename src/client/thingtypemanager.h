@@ -32,7 +32,7 @@
 
 // Lista de IDs de itens que podem ser coletados
 static const std::vector<uint16_t> COLLECTABLE_ITEM_IDS = {
-    3617, 3619, 3614, 3621, 3616, 3634, 3630
+    1773, 1774, 1775, 1776, 1783, 1784, 1785, 1786, 1787, 1788, 1789, 1790, 1791, 1852, 1907, 1908, 3614, 3616, 3617, 3619, 3621, 3622
 };
 
 using RaceList = std::vector<RaceType>;

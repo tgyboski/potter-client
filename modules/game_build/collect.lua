@@ -26,6 +26,8 @@ end
 
 function Collect._onExtendedOpcode(protocol, opcode, buffer)
   if tonumber(opcode) ~= tonumber(Collect.opCode) then return end
+
+
   local json_status, json_data =
   pcall(
     function()
@@ -69,21 +71,13 @@ function Collect.onTry(data)
   local count = success and data.count or 1
   local type = data.type
 
-  print(count)
-  
   local tile = g_map.getTile(data.pos1)
   if not tile then print("2") return end
   local item = tile:getTopUseThing()
-  print(item:getId())
   if not item or not item:isItem() or item:getId() ~= data.itemId or not g_things.isCollectableItem(item:getId()) then print("1") return end
 
   item:setResourceHealth(data.resourceHealth) -- Atualiza a barra de vida do item
 
-  print(item:getResourceHealth())
-
-
-  
-  print(json.encode(data))
   -- Anima o item da posição ao lado até o jogador
   if data.success then
     for i = 1, count do

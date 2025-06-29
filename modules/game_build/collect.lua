@@ -65,16 +65,15 @@ end
 
 -- Função de teste para a animação de recursos
 function Collect.onTry(data)
-  print(json.encode(data))
   local fromPos = data.pos1
   local toPos = data.pos2
   local count = success and data.count or 1
   local type = data.type
 
   local tile = g_map.getTile(data.pos1)
-  if not tile then print("2") return end
+  if not tile then return end
   local item = tile:getTopUseThing()
-  if not item or not item:isItem() or item:getId() ~= data.itemId or not g_things.isCollectableItem(item:getId()) then print("1") return end
+  if not item or not item:isItem() or item:getId() ~= data.itemId or not g_things.isCollectableItem(item:getId()) then return end
 
   item:setResourceHealth(data.resourceHealth) -- Atualiza a barra de vida do item
 
